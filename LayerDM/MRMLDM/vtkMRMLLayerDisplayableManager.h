@@ -73,7 +73,7 @@ protected:
   void UpdateFromMRML() override;
 
   int GetMouseCursor() override;
-  void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData) override;
+  void SetHasFocus(bool hasFocus) override;
 
 private:
   vtkSmartPointer<vtkMRMLLayerDMPipelineManager> m_pipelineManager;
