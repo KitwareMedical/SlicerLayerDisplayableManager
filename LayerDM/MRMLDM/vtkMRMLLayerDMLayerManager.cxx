@@ -289,7 +289,7 @@ void vtkMRMLLayerDMLayerManager::ResetRenderersCameraClippingRange(const std::se
     {
       continue;
     }
-    renderer->ResetCameraClippingRange(bounds.data());
+    renderer->ResetCameraClippingRange(const_cast<double*>(bounds.data()));
   }
 }
 

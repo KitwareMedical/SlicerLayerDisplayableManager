@@ -68,3 +68,27 @@ private:
     m_callback;
   bool m_isBlocked;
 };
+
+template <typename T>
+bool operator==(vtkObject* lhs, const vtkWeakPointer<T>& rhs)
+{
+  return lhs == rhs.GetPointer();
+}
+
+template <typename T>
+bool operator==(const vtkWeakPointer<T>& lhs, vtkObject* rhs)
+{
+  return lhs.GetPointer() == rhs;
+}
+
+template <typename T>
+bool operator==(vtkObject* lhs, const vtkSmartPointer<T>& rhs)
+{
+  return lhs == rhs.GetPointer();
+}
+
+template <typename T>
+bool operator==(const vtkSmartPointer<T>& lhs, vtkObject* rhs)
+{
+  return lhs.GetPointer() == rhs;
+}
