@@ -182,12 +182,12 @@ void vtkMRMLLayerDisplayableManager::Create()
   this->UpdateFromMRML();
 }
 
-void vtkMRMLLayerDisplayableManager::SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData)
+void vtkMRMLLayerDisplayableManager::SetHasFocus(bool hasFocus)
 {
-  Superclass ::SetHasFocus(hasFocus, eventData);
+  Superclass ::SetHasFocus(hasFocus);
   if (this->m_pipelineManager && !hasFocus)
   {
-    this->m_pipelineManager->LoseFocus(eventData);
+    this->m_pipelineManager->LoseFocus();
   }
 }
 
