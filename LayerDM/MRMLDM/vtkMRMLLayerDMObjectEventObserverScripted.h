@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vtkSlicerLayerDMModuleMRMLDisplayableManagerExport.h"
+#include "vtkSlicerLayerDMModuleMRMLDisplayableManagerModule.h"
 
 #include "vtkMRMLLayerDMObjectEventObserver.h"
 
