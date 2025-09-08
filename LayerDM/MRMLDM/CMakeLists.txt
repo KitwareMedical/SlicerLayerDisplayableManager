@@ -1,85 +1,46 @@
-project(vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager)
-
-set(KIT ${PROJECT_NAME})
-
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT")
-
-set(${KIT}_INCLUDE_DIRECTORIES)
-
-set(displayable_manager_SRCS
-  vtkMRMLLayerDisplayableManager.cxx
-)
-
-SlicerConfigureDisplayableManagerObjectFactory(
-  TARGET_NAME ${KIT}
-  SRCS "${displayable_manager_SRCS}"
-  EXPORT_MACRO "${${KIT}_EXPORT_DIRECTIVE}"
-  EXPORT_HEADER "${KIT}Export.h"
-  OUTPUT_SRCS_VAR displayable_manager_instantiator_SRCS
-)
-
-set(${KIT}_SRCS
-  ${displayable_manager_instantiator_SRCS}
-  ${displayable_manager_SRCS}
-  vtkMRMLLayerDMCameraSynchronizer.cxx
-  vtkMRMLLayerDMCameraSynchronizer.h
-  vtkMRMLLayerDMInteractionLogic.cxx
-  vtkMRMLLayerDMInteractionLogic.h
-  vtkMRMLLayerDMLayerManager.cxx
-  vtkMRMLLayerDMLayerManager.h
-  vtkMRMLLayerDMPipelineCallbackCreator.cxx
-  vtkMRMLLayerDMPipelineCallbackCreator.h
-  vtkMRMLLayerDMPipelineCreateHelper.h
-  vtkMRMLLayerDMPipelineCreatorI.cxx
-  vtkMRMLLayerDMPipelineCreatorI.h
-  vtkMRMLLayerDMPipelineFactory.cxx
-  vtkMRMLLayerDMPipelineFactory.h
-  vtkMRMLLayerDMPipelineI.cxx
-  vtkMRMLLayerDMPipelineI.h
-  vtkMRMLLayerDMPipelineManager.cxx
-  vtkMRMLLayerDMPipelineManager.h
-  vtkMRMLLayerDisplayableManager.h
+set(classes
+  vtkMRMLLayerDMCameraSynchronizer
+  vtkMRMLLayerDMInteractionLogic
+  vtkMRMLLayerDMLayerManager
+  vtkMRMLLayerDMPipelineCallbackCreator
+  vtkMRMLLayerDMPipelineCreatorI
+  vtkMRMLLayerDMPipelineFactory
+  vtkMRMLLayerDMPipelineI
+  vtkMRMLLayerDMPipelineManager
+  vtkMRMLLayerDisplayableManager
 )
 
 if (VTK_WRAP_PYTHON)
-  list(APPEND ${KIT}_SRCS
-    vtkMRMLLayerDMPipelineScriptedCreator.cxx
-    vtkMRMLLayerDMPipelineScriptedCreator.h
-    vtkMRMLLayerDMScriptedPipelineBridge.cxx
-    vtkMRMLLayerDMScriptedPipelineBridge.h
+  list(APPEND classes
+    vtkMRMLLayerDMPipelineScriptedCreator
+    vtkMRMLLayerDMScriptedPipelineBridge
   )
 
   add_subdirectory(Python)
 endif ()
 
-
-set(${KIT}_TARGET_LIBRARIES
-  ${MRML_LIBRARIES}
-  vtkSlicer${MODULE_NAME}ModuleMRML
+# Handle factory registration
+set(factory_classes
+  vtkMRMLLayerDisplayableManager
 )
 
-#-----------------------------------------------------------------------------
+foreach(class IN LISTS factory_classes)
+  vtk_object_factory_declare(BASE ${class} OVERRIDE ${class})
+endforeach()
 
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
+set_property(GLOBAL PROPERTY "_vtk_module_autoinit_include" "\"vtkAutoInit.h\"")
+vtk_object_factory_configure(
+  SOURCE_FILE vtk_object_factory_source
+  HEADER_FILE vtk_object_factory_header
+  EXPORT_MACRO "")
+
+# Module configuration
+vtk_module_add_module(VTK::SlicerLayerDMModuleMRMLDisplayableManager
+  EXPORT_MACRO_PREFIX VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER
+  CLASSES ${classes}
+  SOURCES ${vtk_object_factory_source}
+  PRIVATE_HEADERS ${vtk_object_factory_header}
 )
 
-target_include_directories(
-  ${KIT}
-  PUBLIC
-  ${${KIT}_SOURCE_DIR}
-  ${${KIT}_BINARY_DIR}
-)
-
-if(${KIT}_AUTOINIT)
-  set_property(TARGET ${KIT}
-    APPEND PROPERTY COMPILE_DEFINITIONS
-    "${KIT}_AUTOINIT=1(${KIT})"
-    )
-endif()
-
-target_compile_features(${KIT} PUBLIC cxx_std_17)
+vtk_module_definitions(VTK::SlicerLayerDMModuleMRMLDisplayableManager PRIVATE
+  "vtkSlicerLayerDMModuleMRMLDisplayableManager_AUTOINIT=1(vtkSlicerLayerDMModuleMRMLDisplayableManager)")
