@@ -1,0 +1,8 @@
+NAME
+  VTK::SlicerLayerDMModuleLogic
+LIBRARY_NAME
+  vtkSlicerLayerDMModuleLogic
+DEPENDS
+  VTK::SlicerLayerDMModuleMRML
+DESCRIPTION
+  "vtkSlicerLayerDMModuleLogic"
