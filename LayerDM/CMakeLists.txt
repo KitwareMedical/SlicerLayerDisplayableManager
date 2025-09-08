@@ -10,10 +10,7 @@ add_subdirectory(MRMLDM)
 #-----------------------------------------------------------------------------
 set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
-# Current_{source,binary} and Slicer_{Libs,Base} already included
-set(MODULE_INCLUDE_DIRECTORIES
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDM
-  ${CMAKE_CURRENT_BINARY_DIR}/MRMLDM
+set(MODULE_INCLUDE_DIRECTORIES 
 )
 
 set(MODULE_SRCS
@@ -29,7 +26,6 @@ set(MODULE_UI_SRCS
 )
 
 set(MODULE_TARGET_LIBRARIES
-  vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
 )
 
 set(MODULE_RESOURCES
