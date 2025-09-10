@@ -2,6 +2,9 @@
 
 A 3D Slicer module introducing a new displayable manager architecture for layered rendering and interaction handling.
 
+<div style="text-align: center;">
+  <img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/LayerDisplayableManager.png" style="background-color: white;"/>
+</div>
 ---
 
 ## Overview
@@ -89,13 +92,17 @@ visualization components.
 
 ## Architecture diagram :
 
-<img src="https://github.com/Thibault-Pelletier/SlicerLayerDisplayableManager/raw/main/Doc/LayeredDisplayableManager_UML.jpg" width="500"/>
+<div style="text-align: center;">
+<img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/LayeredDisplayableManager_UML.jpg" width="500"/>
+</div>
 
 ---
 
 ## API from `vtkMRMLLayerDMPipelineI`
 
-<img src="https://github.com/Thibault-Pelletier/SlicerLayerDisplayableManager/raw/main/Doc/PipelineI_API.jpg" width="500"/>
+<div style="text-align: center;">
+<img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/PipelineI_API.jpg" width="500"/>
+</div>
 
 ```cpp
 New() -> vtkMRMLLayerDMPipelineI*
