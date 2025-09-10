@@ -109,7 +109,7 @@ New() -> vtkMRMLLayerDMPipelineI*
 CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) -> bool
 GetCamera() const -> vtkCamera*
 GetMouseCursor() const -> int
-GetRenderLayer() const -> unsigned int
+GetRenderOrder() const -> unsigned int
 GetWidgetState() const -> int
 LoseFocus(vtkMRMLInteractionEventData* eventData) -> void
 OnDefaultCameraModified(vtkCamera* camera) -> void
@@ -142,7 +142,7 @@ OnUpdate(vtkObject* obj, unsigned long eventId, void* callData) -> void
 ## Python Integration
 
 - Python pipelines can be created using
-  `from LayerDMManagerLib.vtkMRMLLayerDMScriptedPipeline import vtkMRMLLayerDMScriptedPipeline`
+  `from LayerDMLib.vtkMRMLLayerDMScriptedPipeline import vtkMRMLLayerDMScriptedPipeline`
 - Scripted creators allow dynamic injection of pipeline logic
 - Ideal for prototyping and rapid development
 
