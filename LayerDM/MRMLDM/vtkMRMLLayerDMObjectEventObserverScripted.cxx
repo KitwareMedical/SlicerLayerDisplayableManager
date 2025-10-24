@@ -11,13 +11,14 @@ vtkMRMLLayerDMObjectEventObserverScripted::vtkMRMLLayerDMObjectEventObserverScri
   this->SetUpdateCallback(
     [this](vtkObject* node, unsigned long eventId, void* callData) -> void
     {
-      if (!Py_IsInitialized())
+      if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
       {
         return;
       }
 
       vtkPythonScopeGilEnsurer gilEnsurer;
-      vtkMRMLLayerDMPythonUtil::CallPythonObject(this->m_object, vtkMRMLLayerDMPythonUtil::ToPyArgs(node, eventId, callData));
+      auto result = vtkMRMLLayerDMPythonUtil::CallPythonObject(this->m_object, vtkMRMLLayerDMPythonUtil::ToPyArgs(node, eventId, callData));
+      vtkMRMLLayerDMPythonUtil::DecrementResultAndErrorMacroOnPyError(result, "vtkMRMLLayerDMObjectEventObserverScripted::OnUpdate");
     });
 }
 

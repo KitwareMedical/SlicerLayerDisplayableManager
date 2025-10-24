@@ -20,7 +20,7 @@ vtkMRMLLayerDMPipelineScriptedCreator::vtkMRMLLayerDMPipelineScriptedCreator()
   this->SetCallback(
     [this](vtkMRMLAbstractViewNode* viewNode, vtkMRMLNode* node) -> vtkSmartPointer<vtkMRMLLayerDMPipelineI>
     {
-      if (!Py_IsInitialized())
+      if (!vtkMRMLLayerDMPythonUtil::IsValidPythonContext())
       {
         return nullptr;
       }

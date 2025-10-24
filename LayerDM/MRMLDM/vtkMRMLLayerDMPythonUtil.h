@@ -8,6 +8,7 @@
 #include <vtkSmartPyObject.h>
 
 // STD includes
+#include <string>
 #include <vector>
 
 /// \brief Utility class for Python/C++ interoperability in VTK MRML Layer Displayable Manager
@@ -82,7 +83,27 @@ public:
   /// \param destObject Pointer to PyObject pointer to delete and set to nullptr
   static void DeletePythonObject(PyObject** destObject);
 
+  /// \brief true is python is initialized and no error has occurred.
+  static bool IsValidPythonContext();
+
+  /// \brief returns the formatted exception string if any exception occurred.
+  /// Can be used to warn on current errors without swallowing the exception.
+  static std::string FormatExceptionTraceback();
+
+  /// \brief Decrement the input PyObject if it's valid and print a vtkErrorMacro in case any
+  ///   PyError occurred.
+  ///
+  /// Does nothing if Python context is invalid.
+  /// Should be used by Methods that cannot properly forward Python results back to the interpreter to avoid
+  /// silent errors happening in the Python layer (or errors being raised in unrelated parts of the executable).
+  ///
+  /// This method doesn't swallow the underlying python exception.
+  /// Python level exceptions should be handled at the python level where they are raised to avoid silent errors from happening.
+  static void DecrementResultAndErrorMacroOnPyError(PyObject* result, const std::string& context);
+
 protected:
+  static std::string GetObjectStr(PyObject* object);
+
   vtkMRMLLayerDMPythonUtil();
   ~vtkMRMLLayerDMPythonUtil() override;
 };
