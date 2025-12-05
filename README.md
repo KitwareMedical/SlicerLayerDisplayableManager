@@ -7,9 +7,17 @@ A 3D Slicer module introducing a new displayable manager architecture for layere
 </div>
 ---
 
+![GitHub stars](https://img.shields.io/github/stars/kitwareMedical/SlicerLayerDisplayableManager)
+[![Documentation Status](https://readthedocs.org/projects/SlicerLayerDisplayableManager/badge/?version=latest)](https://trame-slicer.readthedocs.io/en/latest/?badge=latest)
+
+## Usage
+
+The [API Reference](https://SlicerLayerDisplayableManager.readthedocs.io/en/latest/index.html)
+documentation provides API-level documentation.
+
 ## Overview
 
-**SlicerLayerDisplayableManager** is an experimental module designed to simplify the integration of new display
+**SlicerLayerDisplayableManager** is a module designed to simplify the integration of new display
 pipelines in 3D Slicer. It introduces a flexible and extensible framework for managing layered rendering, interaction
 forwarding, and camera synchronization across multiple pipelines.
 
@@ -40,7 +48,7 @@ The current displayable manager (DM) architecture in 3D Slicer presents several 
 - Factory instantiation: DMs are created using string-based factories, preventing injection of shared dependencies or
   services.
 
---- 
+---
 
 ## Improvements Introduced by SlicerLayerDisplayableManager
 
@@ -66,9 +74,6 @@ visualization components.
 - Lambda and callback support for dependency injection
 - Customizable observer update pattern
 - First-class Python abstract pipeline class
-
-> WARNING : **Experimental Module**  
-> API may change or break between versions. Under review by the 3D Slicer community for potential core integration.
 
 ---
 
@@ -142,24 +147,11 @@ OnUpdate(vtkObject* obj, unsigned long eventId, void* callData) -> void
 ## Python Integration
 
 - Python pipelines can be created using
-  `from LayerDMLib.vtkMRMLLayerDMScriptedPipeline import vtkMRMLLayerDMScriptedPipeline`
+  `from LayerDMLib import vtkMRMLLayerDMScriptedPipeline`
 - Scripted creators allow dynamic injection of pipeline logic
-- Ideal for prototyping and rapid development
-
----
-
-## Status
-
-This module is under active development and experimentation. Contributions and feedback from the 3D Slicer community are
-welcome to refine its design and promote future integration into the core.
 
 ---
 
 ## Getting Started
 
-To use this module:
-
-1. Register your pipeline using the factory API
-2. Implement your pipeline logic via `vtkMRMLLayerDMPipelineI` or its Python counterpart
-3. Inject your creator using callback or scripted creator
-4. Let the displayable manager handle the rest
+To use this module checkout the [examples](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/tree/main/Examples/Python/ModelGlowDM/ModelGlowDM.py).

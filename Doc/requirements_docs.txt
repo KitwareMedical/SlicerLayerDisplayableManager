@@ -1,0 +1,7 @@
+sphinx>=8,<9
+sphinx_rtd_theme
+sphinxcontrib-mermaid
+sphinx-autodoc-typehints
+breath
+exhale
+myst-parser>=4
