@@ -12,6 +12,8 @@ Usage:
 """
 
 import sys
+import qt
+import random
 
 import slicer
 from slicer import (
@@ -32,13 +34,14 @@ from vtk import (
     calldata_type,
     vtkActor,
     vtkGeneralTransform,
+    vtkMath,
     vtkNamedColors,
     vtkOutlineGlowPass,
     vtkPolyDataMapper,
     vtkRenderStepsPass,
     vtkRenderer,
+    vtkSphereSource,
     vtkTransformPolyDataFilter,
-    vtkMath,
 )
 
 from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
@@ -47,7 +50,7 @@ from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
 class ModelGlowDM(ScriptedLoadableModule):
     def __init__(self, parent):
         ScriptedLoadableModule.__init__(self, parent)
-        self.parent.title = "ModelGlowDM"
+        self.parent.title = " Model Glow Pipeline Example"
         self.parent.categories = ["qSlicerAbstractCoreModule", "Examples"]
         self.parent.dependencies = []
         self.parent.contributors = []
@@ -85,7 +88,7 @@ class _Pipeline(vtkMRMLLayerDMScriptedPipeline):
         The actual choice of attribute is arbitrary in this example and the creation logic can be adapted in actual
         application code.
 
-        Warning: Pipeline creation in the views is triggerred by adding the node to the scene.
+        Warning: Pipeline creation in the views is triggered by adding the node to the scene.
         vtkMRMLScriptedModuleNode properties should be initialized prior to adding the nodes to the scene.
         """
         node = vtkMRMLScriptedModuleNode()
@@ -102,7 +105,7 @@ class _Pipeline(vtkMRMLLayerDMScriptedPipeline):
 
     @classmethod
     def TryCreatePipeline(
-        cls, viewNode: vtkMRMLAbstractViewNode, node: vtkMRMLNode
+            cls, viewNode: vtkMRMLAbstractViewNode, node: vtkMRMLNode
     ) -> vtkMRMLLayerDMScriptedPipeline | None:
         """
         Since we are creating pipelines for 3D views only, we check here if the view node is a ThreedView node and
@@ -259,8 +262,8 @@ class ModelGlowDMPipeline(_Pipeline):
         default behavior: does nothing.
 
         Here, we add our actor to the input renderer.
-        If the pipeline renderer has changed, the pipeline's ResetDisplay method will be triggerred and in turn its
-        UpdatePipeline method will be triggerred.
+        If the pipeline renderer has changed, the pipeline's ResetDisplay method will be triggered and in turn its
+        UpdatePipeline method will be triggered.
 
         Since we don't control the actual renderer used by the pipeline, this should be used systematically.
         See also: self.GetRenderer()
@@ -276,8 +279,8 @@ class ModelGlowDMPipeline(_Pipeline):
         default behavior: does nothing.
 
         Here, we add our actor to the input renderer.
-        If the pipeline renderer has changed, the pipeline's ResetDisplay method will be triggerred and in turn its
-        UpdatePipeline method will be triggerred.
+        If the pipeline renderer has changed, the pipeline's ResetDisplay method will be triggered and in turn its
+        UpdatePipeline method will be triggered.
 
         Since we don't control the actual renderer used by the pipeline, this should be used systematically.
         See also: self.GetRenderer()
@@ -317,8 +320,8 @@ class ModelGlowDMPipeline(_Pipeline):
         Observer update callback.
         Triggered when any object & events observed using UpdateObserver is triggered.
 
-        :param obj: vtkObject instance which triggerred the callback
-        :param eventId: Event id which triggerred the callback
+        :param obj: vtkObject instance which triggered the callback
+        :param eventId: Event id which triggered the callback
         :param callData: Optional observer call data. Use self.CastCallData(callData, vtkType) to convert to Python
 
         Here, we want to update our model transform node observer if it has changed and trigger the pipeline's display
@@ -360,9 +363,9 @@ class ModelGlowDMPipeline(_Pipeline):
         pos = eventData.GetWorldPosition()
         glowActorBounds = self._polyData.GetBounds()
         isInBounds = (
-            glowActorBounds[0] < pos[0] < glowActorBounds[1]
-            and glowActorBounds[2] < pos[1] < glowActorBounds[3]
-            and glowActorBounds[4] < pos[2] < glowActorBounds[5]
+                glowActorBounds[0] < pos[0] < glowActorBounds[1]
+                and glowActorBounds[2] < pos[1] < glowActorBounds[3]
+                and glowActorBounds[4] < pos[2] < glowActorBounds[5]
         )
         distance2 = vtkMath.Distance2BetweenPoints(pos, self._polyData.GetCenter())
         return isInBounds, distance2
@@ -387,7 +390,7 @@ class ModelGlowDMPipeline(_Pipeline):
         Triggered when the pipeline had focus (processed an interaction) and loses the focus (other pipeline
         handled the new interaction or window leave event).
         default behavior: does nothing.
-        :param eventData: Optional event data which triggerred the lose focus
+        :param eventData: Optional event data which triggered the lose focus
 
         Here, the pipeline lost the previous interaction.
         We make sure to restore the selection state.
@@ -600,4 +603,54 @@ def autoCreateGlowNode():
 
 
 class ModelGlowDMWidget(ScriptedLoadableModuleWidget):
-    pass
+    """
+    In this example, the module's widget will allow us to create random sphere model nodes in the scene.
+    """
+
+    def setup(self) -> None:
+        """
+        In the setup method, we create a widget with only two buttons:
+            - A "create sphere" button to create a random sphere in the scene
+            - A "Reset 3D views" button to reset the 3D view on the created spheres
+        """
+        ScriptedLoadableModuleWidget.setup(self)
+
+        widget = qt.QWidget()
+        layout = qt.QVBoxLayout(widget)
+
+        createSphereButton = qt.QPushButton("Create sphere")
+        createSphereButton.clicked.connect(self._onCreateSphereClicked)
+        layout.addWidget(createSphereButton)
+
+        reset3DView = qt.QPushButton("Reset 3D views")
+        reset3DView.clicked.connect(slicer.util.resetThreeDViews)
+        layout.addWidget(reset3DView)
+        layout.addStretch()
+
+        self.layout.addWidget(widget)
+
+    @classmethod
+    def _onCreateSphereClicked(cls, *_):
+        """
+        Here we create the sphere models at random.
+
+        Note: Attaching the glow data to the model could be done in this type of methods if we wanted more control
+            on the creation logic.
+        """
+        # Create a sphere positioned at a random position
+        sphereSource = vtkSphereSource()
+        sphereSource.SetCenter(random.uniform(0, 10),
+                               random.uniform(0, 10),
+                               random.uniform(0, 10))
+        sphereSource.SetRadius(random.uniform(0.1, 1.0))
+        sphereSource.Update()
+
+        # Create the model node and set its polydata
+        modelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+        modelNode.SetAndObservePolyData(sphereSource.GetOutput())
+        modelNode.CreateDefaultDisplayNodes()
+
+        # Set random color
+        displayNode = modelNode.GetDisplayNode()
+        modelNode.SetAndObserveDisplayNodeID(displayNode.GetID())
+        displayNode.SetColor(random.random(), random.random(), random.random())

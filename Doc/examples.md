@@ -8,9 +8,3 @@
 :language: python
 :linenos:
 ```
-
-## C++
-
-```note
-Coming soon!
-```

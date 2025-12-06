@@ -6,16 +6,14 @@
 Slicer Layer DM is a [3D Slicer](https://github.com/Slicer/Slicer/) extension simplifying the creation of new display
 and widget components in the 3D Slicer views.
 
-```{warning}
-This documentation is still a work in progress.
-```
-
 ```{toctree}
 :maxdepth: 2
 
 introduction
+getting_started
+displayable_manager_reminders
+extension_architecture
 examples
-library_architecture
 api/library_root
 ```
 

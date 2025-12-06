@@ -7,7 +7,7 @@ A 3D Slicer module introducing a new displayable manager architecture for layere
 </div>
 
 ![GitHub stars](https://img.shields.io/github/stars/kitwareMedical/SlicerLayerDisplayableManager)
-![Documentation Status](https://readthedocs.org/projects/slicerlayerdisplayablemanager/badge/?version=latest)
+[![Documentation Status](https://readthedocs.org/projects/slicerlayerdisplayablemanager/badge/?version=latest)](https://slicerlayerdisplayablemanager.readthedocs.io/en/latest/?badge=latest)
 
 ## Usage
 
@@ -23,8 +23,6 @@ forwarding, and camera synchronization across multiple pipelines.
 This module aims to address common limitations in existing displayable managers by offering a more modular and
 injectable design.
 
----
-
 ## Goals
 
 - Factorize pipeline creation and teardown
@@ -32,8 +30,6 @@ injectable design.
 - Maintain focus continuity across pipelines
 - Synchronize cameras across views and layers
 - Centralize render request handling
-
----
 
 ## Limitations in Current Displayable Managers
 
@@ -46,8 +42,6 @@ The current displayable manager (DM) architecture in 3D Slicer presents several 
 - Focus handling: Focus decisions are based on proximity to interaction only, without consideration for layer priority.
 - Factory instantiation: DMs are created using string-based factories, preventing injection of shared dependencies or
   services.
-
----
 
 ## Improvements Introduced by SlicerLayerDisplayableManager
 
@@ -65,8 +59,6 @@ The module introduces a new architecture to improve development quality and scal
 These changes simplify the development of new widgets, reduce boilerplate, and improve maintainability of existing
 visualization components.
 
----
-
 ## Key Features
 
 - Pipeline registration via factory and creator API
@@ -74,83 +66,22 @@ visualization components.
 - Customizable observer update pattern
 - First-class Python abstract pipeline class
 
----
+For more information on the extension's architecture, please refer to
+the [online documentation](https://slicerlayerdisplayablemanager.readthedocs.io/en/latest/extension_architecture.html).
 
-## Core Classes
+## Installing the extension
 
-| Class                                 | Description                                                                                  |
-|---------------------------------------|----------------------------------------------------------------------------------------------|
-| vtkMRMLLayerDMPipelineI               | Interface for display pipelines. Handles interaction, rendering, camera, and observer logic. |
-| vtkMRMLLayerDisplayableManager        | Main displayable manager. Initializes pipeline manager and delegates scene updates.          |
-| vtkMRMLLayerDMCameraSynchronizer      | Synchronizes default camera with renderer or slice node state.                               |
-| vtkMRMLLayerDMLayerManager            | Manages renderer layers based on pipeline layer/camera pairs.                                |
-| vtkMRMLLayerDMPipelineCreatorI        | Interface for pipeline creation. Supports custom instantiation logic.                        |
-| vtkMRMLLayerDMPipelineCallbackCreator | Callback-based implementation of pipeline creator.                                           |
-| vtkMRMLLayerDMPipelineScriptedCreator | Python lambda-based pipeline creator.                                                        |
-| vtkMRMLLayerDMPipelineFactory         | Singleton factory for pipeline instantiation and registration.                               |
-| vtkMRMLLayerDMPipelineManager         | Manages pipeline lifecycle, layer manager, and camera sync.                                  |
-| vtkMRMLLayerDMScriptedPipelineBridge  | Python bridge for virtual method delegation.                                                 |
-| vtkMRMLLayerDMScriptedPipeline        | Python abstract class for scripted pipelines.                                                |
-
----
-
-## Architecture diagram :
+The extension can be installed through the extension manager from 3D Slicer 5.10 onwards:
 
 <div style="text-align: center;">
-<img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/LayeredDisplayableManager_UML.jpg" width="500"/>
+  <img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/ExtensionInstall.png" style="background-color: white;"/>
 </div>
 
----
-
-## API from `vtkMRMLLayerDMPipelineI`
-
-<div style="text-align: center;">
-<img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/PipelineI_API.jpg" width="500"/>
-</div>
-
-```cpp
-New() -> vtkMRMLLayerDMPipelineI*
-CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) -> bool
-GetCamera() const -> vtkCamera*
-GetMouseCursor() const -> int
-GetRenderOrder() const -> unsigned int
-GetWidgetState() const -> int
-LoseFocus(vtkMRMLInteractionEventData* eventData) -> void
-OnDefaultCameraModified(vtkCamera* camera) -> void
-OnRendererAdded(vtkRenderer* renderer) -> void
-OnRendererRemoved(vtkRenderer* renderer) -> void
-ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) -> bool
-SetDisplayNode(vtkMRMLNode* displayNode) -> void
-SetPipelineManager(vtkMRMLLayerDMPipelineManager* pipelineManager) -> void
-SetScene(vtkMRMLScene* scene) -> void
-SetViewNode(vtkMRMLAbstractViewNode* viewNode) -> void
-UpdatePipeline() -> void
-BlockResetDisplay(bool isBlocked) -> bool
-GetDisplayNode() const -> vtkMRMLNode*
-GetNodePipeline(vtkMRMLNode* node) const -> vtkMRMLLayerDMPipelineI*
-GetRenderer() const -> vtkRenderer*
-GetScene() const -> vtkMRMLScene*
-GetViewNode() const -> vtkMRMLAbstractViewNode*
-UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const -> bool
-UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event) const -> bool
-ResetDisplay() -> void
-RequestRender() const -> void
-SetRenderer(vtkRenderer* renderer) -> void
-vtkMRMLLayerDMPipelineI()
-~vtkMRMLLayerDMPipelineI()
-OnUpdate(vtkObject* obj, unsigned long eventId, void* callData) -> void
-```
-
----
-
-## Python Integration
-
-- Python pipelines can be created using
-  `from LayerDMLib import vtkMRMLLayerDMScriptedPipeline`
-- Scripted creators allow dynamic injection of pipeline logic
-
----
 
 ## Getting Started
 
-To use this module checkout the [examples](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/tree/main/Examples/Python/ModelGlowDM/ModelGlowDM.py).
+To use this extension checkout
+the [getting started documentation](https://slicerlayerdisplayablemanager.readthedocs.io/en/latest/getting_started.html).
+
+And refer to
+the [examples](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/tree/main/Examples/Python/ModelGlowDM/ModelGlowDM.py).
