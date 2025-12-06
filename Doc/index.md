@@ -15,6 +15,7 @@ This documentation is still a work in progress.
 
 introduction
 examples
+displayable_manager_reminders
 library_architecture
 api/library_root
 ```
