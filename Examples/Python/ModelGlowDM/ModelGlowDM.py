@@ -460,7 +460,7 @@ class ModelGlowDMPipeline(_Pipeline):
         Note: This logic can be simplified if we attach our pipeline to the model node directly.
             We would then iterate over node references to check if we have our pipeline node.
         """
-        for node in scene.GetNodesByClassName("vtkMRMLScriptedModuleNode"):
+        for node in scene.GetNodesByClass("vtkMRMLScriptedModuleNode"):
             if cls._GetModelNodeID(node) == modelNode.GetID():
                 scene.RemoveNode(node)
 
