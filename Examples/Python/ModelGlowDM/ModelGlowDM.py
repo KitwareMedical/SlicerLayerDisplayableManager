@@ -33,6 +33,7 @@ from vtk import (
     VTK_OBJECT,
     calldata_type,
     vtkActor,
+    vtkCommand,
     vtkGeneralTransform,
     vtkMath,
     vtkNamedColors,
@@ -354,10 +355,16 @@ class ModelGlowDMPipeline(_Pipeline):
 
         Here, we check if the event interaction is within the glow pass actor bounds and return the distance to it.
 
+        To avoid blocking camera interaction, we will also process mouse move events.
+        Of course we could also check for left click to go further with this widget.
+
         Note: This is not an efficient way to check for interactions. A better way would be to delegate to the model
             display node for picking events.
         """
-        if not self._IsModelVisible() or self._polyData is None:
+        # Only process mouse move events to avoid blocking camera interaction on click / drag
+        isMouseMoveEvent = eventData.GetType() == vtkCommand.MouseMoveEvent
+
+        if not isMouseMoveEvent or not self._IsModelVisible() or self._polyData is None:
             return False, sys.float_info.max
 
         pos = eventData.GetWorldPosition()
