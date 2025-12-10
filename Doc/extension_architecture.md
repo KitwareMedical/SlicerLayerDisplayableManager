@@ -90,7 +90,7 @@ by the LayerManager class.
 From a developer standpoint, only the `GetRenderOrder` value needs to be returned. This value is a static value read
 when new pipelines are added / removed from the pipeline manager.
 
-Pipelines with the same GetRenderOrder and the same GetCamera will be grouped in the same renderer layer. If the value
+Pipelines with the same GetRenderOrder and the same GetCustomCamera will be grouped in the same renderer layer. If the value
 is set to 0, the pipelines will be set to the default renderer layer.
 
 The grouping logic is summarized below:

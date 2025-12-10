@@ -198,10 +198,10 @@ implementation by default but can be used to update the display if needed.
 
 ## Defining a custom camera
 
-If another camera should be used and not the default camera, then the `GetCamera` method can be used to return the
+If another camera should be used and not the default camera, then the `GetCustomCamera` method can be used to return the
 camera instance the pipeline should be used.
 
-* `virtual vtkCamera* GetCamera() const`: Return custom camera or nullptr for default behavior.
+* `virtual vtkCamera* GetCustomCamera() const`: Return custom camera or nullptr for default behavior.
 
 Pipelines sharing the same camera instance and the same render order will be set to the same renderer.~~~~
 
