@@ -3,7 +3,7 @@
 A 3D Slicer module introducing a new displayable manager architecture for layered rendering and interaction handling.
 
 <div style="text-align: center;">
-  <img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/LayerDisplayableManager.png" style="background-color: white;"/>
+  <img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/LayerDisplayableManager.png" style="background-color: white;"/>
 </div>
 
 ![GitHub stars](https://img.shields.io/github/stars/kitwareMedical/SlicerLayerDisplayableManager)
@@ -74,7 +74,7 @@ the [online documentation](https://slicerlayerdisplayablemanager.readthedocs.io/
 The extension can be installed through the extension manager from 3D Slicer 5.10 onwards:
 
 <div style="text-align: center;">
-  <img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/ExtensionInstall.png" style="background-color: white;"/>
+  <img src="https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/ExtensionInstall.png" style="background-color: white;"/>
 </div>
 
 

@@ -7,8 +7,8 @@ project(LayerDisplayableManager)
 set(EXTENSION_HOMEPAGE "https://github.com/KitwareMedical/SlicerLayerDisplayableManager")
 set(EXTENSION_CONTRIBUTORS "Thibault Pelletier (Kitware SAS)")
 set(EXTENSION_DESCRIPTION "A 3D Slicer module introducing a new displayable manager architecture for layered rendering and interaction handling.")
-set(EXTENSION_ICONURL "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/LayerDisplayableManager.png")
-set(EXTENSION_SCREENSHOTURLS "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Doc/LayeredDisplayableManager_UML.jpg")
+set(EXTENSION_ICONURL "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/LayerDisplayableManager.png")
+set(EXTENSION_SCREENSHOTURLS "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/LayeredDisplayableManager_UML.jpg")
 set(EXTENSION_DEPENDS "NA") # Specified as a list or "NA" if no dependencies
 
 #-----------------------------------------------------------------------------

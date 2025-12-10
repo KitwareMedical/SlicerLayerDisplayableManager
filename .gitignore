@@ -1,6 +1,6 @@
 **/.idea/
 **/__pycache__/*
 **/_build
-/Doc/api/
-/Doc/doxygen/
+/Docs/api/
+/Docs/doxygen/
 /node_modules/

@@ -9,11 +9,11 @@ build:
     - graphviz
   jobs:
     pre_build:
-      - cd Doc && doxygen Doxyfile
+      - cd Docs && doxygen Doxyfile
 
 sphinx:
-  configuration: Doc/conf.py
+  configuration: Docs/conf.py
 
 python:
   install:
-    - requirements: Doc/requirements_docs.txt
+    - requirements: Docs/requirements_docs.txt
