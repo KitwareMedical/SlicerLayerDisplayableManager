@@ -276,7 +276,7 @@ class CustomVRPipeline(vtkMRMLLayerDMScriptedPipeline):
 
     @classmethod
     def GetVRNode(cls, volumeNode: vtkMRMLVolumeNode, scene: vtkMRMLScene):
-        for node in scene.GetNodesByClass("vtkMRMLScriptedModuleNode"):
+        for node in slicer.util.getNodesByClass("vtkMRMLScriptedModuleNode", scene):
             if cls._GetVolumeNodeID(node) == volumeNode.GetID():
                 return node
         return None

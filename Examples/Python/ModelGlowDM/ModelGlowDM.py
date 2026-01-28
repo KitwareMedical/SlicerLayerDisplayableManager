@@ -388,6 +388,8 @@ class ModelGlowDMPipeline(_Pipeline):
         Here, the pipeline is the closest to the interaction. We modify our display property which will trigger the
         rendering update.
         """
+        if not self.GetDisplayNode():
+            return False
 
         self.GetDisplayNode().SetAttribute("IsSelected", str(1))
         return True
@@ -403,6 +405,8 @@ class ModelGlowDMPipeline(_Pipeline):
         We make sure to restore the selection state.
         """
         super().LoseFocus(eventData)
+        if not self.GetDisplayNode():
+            return
         self.GetDisplayNode().SetAttribute("IsSelected", str(0))
 
     def _UpdateMapperConnection(self):
@@ -434,7 +438,7 @@ class ModelGlowDMPipeline(_Pipeline):
         """
         Convenience method to update the actor based on the model's visibility and the selection.
         """
-        isSelected = bool(int(self.GetDisplayNode().GetAttribute("IsSelected")))
+        isSelected = bool(self.GetDisplayNode() and int(self.GetDisplayNode().GetAttribute("IsSelected")))
         self._glowActor.SetVisibility(self._IsModelVisible() and isSelected)
 
     @classmethod
@@ -467,7 +471,7 @@ class ModelGlowDMPipeline(_Pipeline):
         Note: This logic can be simplified if we attach our pipeline to the model node directly.
             We would then iterate over node references to check if we have our pipeline node.
         """
-        for node in scene.GetNodesByClass("vtkMRMLScriptedModuleNode"):
+        for node in slicer.util.getNodesByClass("vtkMRMLScriptedModuleNode", scene):
             if cls._GetModelNodeID(node) == modelNode.GetID():
                 scene.RemoveNode(node)
 
