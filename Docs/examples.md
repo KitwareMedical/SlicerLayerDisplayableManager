@@ -10,3 +10,17 @@
 :language: python
 :linenos:
 ```
+
+### Volume Rendering Pipeline
+
+![Volume Rendering Example](images/volume_rendering_example.jpg)
+
+```{literalinclude} ../Examples/Python/CustomVR/CustomVR.py
+:language: python
+:linenos:
+```
+
+```{literalinclude} ../Examples/Python/CustomVR/CustomVRLib/CustomVRPipeline.py
+:language: python
+:linenos:
+```

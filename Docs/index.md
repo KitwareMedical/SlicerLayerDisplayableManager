@@ -1,6 +1,6 @@
 # Welcome to the Slicer Layer Displayable Manager's documentation!
 
-![Welcome to Slicer Layer DM](https://raw.githubusercontent.com/KitwareMedical/SlicerLayerDisplayableManager/main/Doc/LayerDisplayableManager.png)
+![Welcome to Slicer Layer DM](https://raw.githubusercontent.com/KitwareMedical/SlicerLayerDisplayableManager/main/Docs/LayerDisplayableManager.png)
 
 
 Slicer Layer DM is a [3D Slicer](https://github.com/Slicer/Slicer/) extension simplifying the creation of new display
