@@ -29,19 +29,22 @@ The diagram below summarizes the relationship between the different classes.
 
 The main classes of the library and their responsibilities are summarized below :
 
-| Class                                 | Description                                                                                  |
-|---------------------------------------|----------------------------------------------------------------------------------------------|
-| vtkMRMLLayerDMPipelineI               | Interface for display pipelines. Handles interaction, rendering, camera, and observer logic. |
-| vtkMRMLLayerDisplayableManager        | Main displayable manager. Initializes pipeline manager and delegates scene updates.          |
-| vtkMRMLLayerDMCameraSynchronizer      | Synchronizes default camera with renderer or slice node state.                               |
-| vtkMRMLLayerDMLayerManager            | Manages renderer layers based on pipeline layer/camera pairs.                                |
-| vtkMRMLLayerDMPipelineCreatorI        | Interface for pipeline creation. Supports custom instantiation logic.                        |
-| vtkMRMLLayerDMPipelineCallbackCreator | Callback-based implementation of pipeline creator.                                           |
-| vtkMRMLLayerDMPipelineScriptedCreator | Python lambda-based pipeline creator.                                                        |
-| vtkMRMLLayerDMPipelineFactory         | Singleton factory for pipeline instantiation and registration.                               |
-| vtkMRMLLayerDMPipelineManager         | Manages pipeline lifecycle, layer manager, and camera sync.                                  |
-| vtkMRMLLayerDMScriptedPipelineBridge  | Python bridge for virtual method delegation.                                                 |
-| vtkMRMLLayerDMScriptedPipeline        | Python abstract class for scripted pipelines.                                                |
+| Class                                    | Description                                                                                  |
+|------------------------------------------|----------------------------------------------------------------------------------------------|
+| vtkMRMLLayerDMPipelineI                  | Interface for display pipelines. Handles interaction, rendering, camera, and observer logic. |
+| vtkMRMLLayerDisplayableManager           | Main displayable manager. Initializes pipeline manager and delegates scene updates.          |
+| vtkMRMLLayerDMCameraSynchronizer         | Synchronizes default camera with renderer or slice node state.                               |
+| vtkMRMLLayerDMLayerManager               | Manages renderer layers based on pipeline layer/camera pairs.                                |
+| vtkMRMLLayerDMPipelineCreatorI           | Interface for pipeline creation. Supports custom instantiation logic.                        |
+| vtkMRMLLayerDMPipelineCallbackCreator    | Callback-based implementation of pipeline creator.                                           |
+| vtkMRMLLayerDMPipelineScriptedCreator    | Python lambda-based pipeline creator.                                                        |
+| vtkMRMLLayerDMPipelineFactory            | Singleton factory for pipeline instantiation and registration.                               |
+| vtkMRMLLayerDMPipelineManager            | Manages pipeline lifecycle, layer manager, and camera sync.                                  |
+| vtkMRMLLayerDMScriptedPipelineBridge     | Python bridge for virtual method delegation.                                                 |
+| vtkMRMLLayerDMScriptedPipeline           | Python abstract class for scripted pipelines.                                                |
+| vtkMRMLLayerDMWidgetEventTranslationNode | MRML node providing interactions to widget event map.                                        |
+| vtkMRMLLayerDMNodeReferenceObserver      | Monitors scene for reference changes to trigger pipeline update.                             |
+| vtkSlicerLayerDMLogic                    | Module's logic class providing helper functionalities to manage display / TL nodes.          |
 
 ## Pipeline lifecycle
 
@@ -61,7 +64,7 @@ The diagram below shows how the LayerDM handles interactions :
    :align: center
 ```
 
-During interactions, the cap process / process and lose focus events are forwarded to the interaction logic class
+During interactions, the can process / process and lose focus events are forwarded to the interaction logic class
 responsible for handling the events.
 
 The interaction logic will forward the events to the underlying pipelines.
@@ -90,8 +93,8 @@ by the LayerManager class.
 From a developer standpoint, only the `GetRenderOrder` value needs to be returned. This value is a static value read
 when new pipelines are added / removed from the pipeline manager.
 
-Pipelines with the same GetRenderOrder and the same GetCustomCamera will be grouped in the same renderer layer. If the value
-is set to 0, the pipelines will be set to the default renderer layer.
+Pipelines with the same GetRenderOrder and the same GetCustomCamera will be grouped in the same renderer layer. If the
+value is set to 0, the pipelines will be set to the default renderer layer.
 
 The grouping logic is summarized below:
 
@@ -115,3 +118,29 @@ between screen and RAS space.
 
 Another added value is that 3D actors can benefit from all VTK features, including antialiasing, which is not the
 case when using 2D actors which is currently used in SliceViews.
+
+## Node reference updates
+
+vtkMRML nodes provide a referencing mechanism. This mechanism is, for instance, used to register nodes as display nodes
+to other nodes.
+
+Pipelines are associated to a given `Display Node` (note: the node doesn't need to inherit from vtkMRMLDisplayNode) when
+nodes in the scene add references to the display node, the pipeline's `OnReferenceToDisplayNodeAdded` method will be
+triggered.
+
+Similarly, when a reference is removed, the pipeline's `OnReferenceToDisplayNodeRemoved` method will be triggered.
+
+By default, these calls will be dispatched to the `OnUpdate` method with the display node as the target vtkObject and
+`vtkMRMLNode::ReferenceAddedEvent` / `vtkMRMLNode::ReferenceRemovedEvent` event Ids.
+
+## Event translation
+
+Although not used internally, the library provides the `vtkMRMLLayerDMWidgetEventTranslationNode` MRML node to help in
+converting processing event data to significant widget events.
+
+Although with a different API, its usage follows the `vtkMRMLAbstractWidget` event translation mechanism.
+
+The implementation was split to provide:
+
+* Direct access from Python
+* Possible access from the Scene to customize the interaction events

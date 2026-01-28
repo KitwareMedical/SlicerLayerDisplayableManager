@@ -220,8 +220,9 @@ The state of the widget and its current mouse cursor can be returned using the f
 * `virtual int GetMouseCursor() const`: Return custom mouse cursor VTK enum.
 * `virtual int GetWidgetState() const`: Return current widget state enum (default idle).
 
-It is advised for complex interactions to
-use [vtkMRMLAbstractWidget objects](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/DisplayableManager/vtkMRMLAbstractWidget.h).
+It is advised for complex interactions to use
+either [vtkMRMLLayerDMWidgetEventTranslationNode objects](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/blob/main/LayerDM/MRML/vtkMRMLLayerDMWidgetEventTranslationNode.h)
+or [vtkMRMLAbstractWidget objects](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/DisplayableManager/vtkMRMLAbstractWidget.h).
 
 ```python
 class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
@@ -390,4 +391,94 @@ vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
         return pipeline;
       });
   }
+```
+
+## Defining custom event translation across pipelines
+
+For complex interactions, it is recommended to use
+either [vtkMRMLLayerDMWidgetEventTranslationNode objects](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/blob/main/LayerDM/MRML/vtkMRMLLayerDMWidgetEventTranslationNode.h)
+or [vtkMRMLAbstractWidget objects](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/DisplayableManager/vtkMRMLAbstractWidget.h).
+
+The vtkMRMLLayerDMWidgetEventTranslationNode are compatible with scene exchange and can be used as an easy way to define
+and customize interactions for given pipelines.
+
+The easiest way to register a TL node is using the LayerDM logic class.
+The logic class can register singleton TL nodes which will not be saved by the scene to provide the default expected TL
+behavior.
+
+```python
+import slicer
+from slicer import vtkSlicerLayerDMLogic
+
+
+def configureTLNode(node):
+    """Configuration logic"""
+
+
+# The following code creates an configures a default translation node
+tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+if tl_node is None:
+    tl_node = vtkSlicerLayerDMLogic.CreateWidgetEventTranslationSingleton(slicer.mrmlScene, "MyTLNodeSingleton")
+    configureTLNode(tl_node)
+
+# After creation, the node can be attached to a given display node
+vtkSlicerLayerDMLogic.SetWidgetEventTranslationNode(node, tl_node)
+
+# The TL node can then be retrieved from the display node
+tl_node = vtkSlicerLayerDMLogic.GetWidgetEventTranslationNode(node)
+```
+
+The TL node provides the following event translation methods:
+
+```python
+# Click event translation
+tl_node.SetTranslation(
+    vtkMRMLAbstractWidget.WidgetStateAny,
+    vtkCommand.LeftButtonReleaseEvent,
+    vtkMRMLAbstractWidget.WidgetEventUser,
+)
+
+# Click drag event translation
+tl_node.SetTranslationClickAndDrag(
+    vtkMRMLAbstractWidget.WidgetStateOnWidget,
+    vtkCommand.LeftButtonPressEvent,
+    dragging_state,
+    start_event,
+    end_event,
+)
+
+# Keyboard events
+tl_node.SetTranslationKeyboard(
+    vtkMRMLAbstractWidget.WidgetStateIdle,
+    "Delete",
+    vtkMRMLAbstractWidget.WidgetEventReset,
+)
+```
+
+In the pipeline, during the can process and process interaction methods, the TL node can be used to translate the
+incoming event data.
+
+```{note}
+The pipelines don't have builtin widget state. The widget should be managed internally by the pipeline if needed.
+State values should reuse the vtkMRMLAbstractWidget enum for compability with the other displayable managers.
+```
+
+```python
+class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
+    def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
+        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
+        if widgetEvent == vtkMRMLAbstractWidget.WidgetEventNone:
+            return False, sys.float_info.max
+
+        # Compute representative distance to event
+        return True, my_distance
+
+    def ProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> bool:
+        widgetEvent = self.tl_node.Translate(self.widgetState, eventData)
+        if widgetEvent == vtkMRMLAbstractWidget.WidgetEventTranslateStart:
+            self.widgetState = vtkMRMLAbstractWidget.WidgetStateTranslate
+            return self.StartTranslate(eventData)
+
+        # ...
+        return True
 ```

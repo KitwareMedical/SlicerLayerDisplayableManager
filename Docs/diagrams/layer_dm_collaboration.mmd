@@ -16,3 +16,4 @@ classDiagram
     AbstractDisplayableManager <|-- LayerDisplayableManager: Inherits
     PipelineCreatorI --> PipelineI: Creates
     PipelineManager "1" --o "*" PipelineI: Uses
+    PipelineManager "1" --o "1" NodeReferenceObserver: Uses
