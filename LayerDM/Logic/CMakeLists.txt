@@ -16,7 +16,7 @@ set(headers
   "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerLayerDMVersion.h"
 )
 
-vtk_module_add_module(VTK::SlicerLayerDMModuleLogic
+vtk_module_add_module(SlicerLayerDM::Logic
   EXPORT_MACRO_PREFIX VTK_SLICER_LAYERDM_MODULE_LOGIC
   CLASSES ${classes}
   HEADERS ${headers}

@@ -1,25 +1,34 @@
-cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.17...4.0)
 
-project(LayerDisplayableManager)
+project(${SKBUILD_PROJECT_NAME} VERSION ${SKBUILD_PROJECT_VERSION})
 
-#-----------------------------------------------------------------------------
-# Extension meta-information
-set(EXTENSION_HOMEPAGE "https://github.com/KitwareMedical/SlicerLayerDisplayableManager")
-set(EXTENSION_CONTRIBUTORS "Thibault Pelletier (Kitware SAS)")
-set(EXTENSION_DESCRIPTION "A 3D Slicer module introducing a new displayable manager architecture for layered rendering and interaction handling.")
-set(EXTENSION_ICONURL "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/LayerDisplayableManager.png")
-set(EXTENSION_SCREENSHOTURLS "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/LayeredDisplayableManager_UML.jpg")
-set(EXTENSION_DEPENDS "NA") # Specified as a list or "NA" if no dependencies
+find_package(Slicer CONFIG REQUIRED)
 
-#-----------------------------------------------------------------------------
-# Extension dependencies
-find_package(Slicer REQUIRED)
-include(${Slicer_USE_FILE})
+include(FetchContent)
+FetchContent_Declare(vtk-sdk-python-helper
+  GIT_REPOSITORY https://github.com/Kitware/vtk-sdk-python-wheel-helper.git
+  GIT_TAG        main
+)
+FetchContent_MakeAvailable(vtk-sdk-python-helper)
 
-#-----------------------------------------------------------------------------
-# Extension modules
-add_subdirectory(LayerDM)
+set(modules
+  SlicerLayerDM::Logic
+  SlicerLayerDM::MRML
+  SlicerLayerDM::MRMLDisplayableManager
+)
 
-#-----------------------------------------------------------------------------
-include(${Slicer_EXTENSION_GENERATE_CONFIG})
-include(${Slicer_EXTENSION_CPACK})
+# Install runtime only dependencies
+vtksdk_build_modules(${SKBUILD_PROJECT_NAME}
+  MODULES ${modules}
+  DEPENDENCIES slicer_core
+)
+vtksdk_generate_package_init(${SKBUILD_PROJECT_NAME}
+  MODULES ${modules}
+  DEPENDENCIES slicer_core
+)
+
+# Make this package part of the slicer meta package
+install(FILES
+  ${CMAKE_SOURCE_DIR}/Python/slicer_layerdm.py
+  DESTINATION slicer
+)

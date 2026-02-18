@@ -8,16 +8,9 @@ set(classes
   vtkMRMLLayerDMPipelineI
   vtkMRMLLayerDMPipelineManager
   vtkMRMLLayerDisplayableManager
+  vtkMRMLLayerDMPipelineScriptedCreator
+  vtkMRMLLayerDMScriptedPipelineBridge
 )
-
-if (VTK_WRAP_PYTHON)
-  list(APPEND classes
-    vtkMRMLLayerDMPipelineScriptedCreator
-    vtkMRMLLayerDMScriptedPipelineBridge
-  )
-
-  add_subdirectory(Python)
-endif ()
 
 # Handle factory registration
 set(factory_classes
@@ -35,12 +28,14 @@ vtk_object_factory_configure(
   EXPORT_MACRO "")
 
 # Module configuration
-vtk_module_add_module(VTK::SlicerLayerDMModuleMRMLDisplayableManager
+vtk_module_add_module(SlicerLayerDM::MRMLDisplayableManager
   EXPORT_MACRO_PREFIX VTK_SLICER_LAYERDM_MODULE_MRMLDISPLAYABLEMANAGER
   CLASSES ${classes}
   SOURCES ${vtk_object_factory_source}
   PRIVATE_HEADERS ${vtk_object_factory_header}
 )
 
-vtk_module_definitions(VTK::SlicerLayerDMModuleMRMLDisplayableManager PRIVATE
+vtk_module_definitions(SlicerLayerDM::MRMLDisplayableManager PRIVATE
   "vtkSlicerLayerDMModuleMRMLDisplayableManager_AUTOINIT=1(vtkSlicerLayerDMModuleMRMLDisplayableManager)")
+
+add_subdirectory(Python)
