@@ -1,9 +1,9 @@
 NAME
-  VTK::SlicerLayerDMModuleMRML
+  SlicerLayerDM::MRML
 LIBRARY_NAME
   vtkSlicerLayerDMModuleMRML
 DEPENDS
-  VTK::SlicerBaseLogic
-  VTK::MRMLCore
+  Slicer::BaseLogic
+  Slicer::MRMLCore
 DESCRIPTION
   "vtkSlicerLayerDMModuleMRML"

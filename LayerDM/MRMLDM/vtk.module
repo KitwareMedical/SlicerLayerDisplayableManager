@@ -1,10 +1,10 @@
 NAME
-  VTK::SlicerLayerDMModuleMRMLDisplayableManager
+  SlicerLayerDM::MRMLDisplayableManager
 LIBRARY_NAME
   vtkSlicerLayerDMModuleMRMLDisplayableManager
 IMPLEMENTABLE
 DEPENDS
-  VTK::MRMLDisplayableManager
-  VTK::SlicerLayerDMModuleMRML
+  Slicer::MRMLDisplayableManager
+  SlicerLayerDM::MRML
 DESCRIPTION
   "vtkSlicerLayerDMModuleMRMLDisplayableManager"
