@@ -1,0 +1,76 @@
+name: build-wheels
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: "OS to run on, must be one of supported runner type"
+        required: true
+        type: string
+      build-target:
+        description: "CIBW build target (e.g., cp310-manylinux_x86_64)"
+        required: true
+        type: string
+      python-version:
+        description: "CIBW build target (e.g., 3.10)"
+        required: true
+        type: string
+      platform-tag:
+        description: "Wheel platform tag to apply after building."
+        required: true
+        type: string
+
+jobs:
+  build-test:
+    runs-on: ${{ inputs.os }}
+
+    env:
+      PIP_EXTRA_INDEX_URL: "https://vtk.org/files/wheel-sdks"
+      CIBW_ENVIRONMENT_PASS_LINUX: "PIP_EXTRA_INDEX_URL"
+      CIBW_BUILD: ${{ inputs.build-target }}
+      # Required to make tests pass (VTK needs them)
+      CIBW_BEFORE_ALL_LINUX: "yum install -y mesa-libGL-devel glx-utils freeglut-devel"
+      # Global test setup
+      CIBW_TEST_REQUIRES: "pytest virtualenv"
+      # Do not repair, everything is already put just as needed to make it work
+      CIBW_REPAIR_WHEEL_COMMAND_LINUX: "
+        python -m pip install wheel &&
+        python -m wheel tags --platform-tag ${{ inputs.platform-tag }} --remove {wheel} &&
+        cp $(dirname {wheel})/slicer_layer_dm*.whl {dest_dir}"
+      # same as above, we don't patch the wheel on Mac too.
+      CIBW_REPAIR_WHEEL_COMMAND_MACOS: "
+        python -m pip install wheel &&
+        python -m wheel tags --platform-tag ${{ inputs.platform-tag }} --remove {wheel} &&
+        cp $(dirname {wheel})/slicer_layer_dm*.whl {dest_dir}"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+      # Required to use MSVC with Ninja
+      - uses: ilammy/msvc-dev-cmd@v1.13.0
+
+      - name: Build wheel
+        uses: pypa/cibuildwheel@v3.3.1
+        env:
+          CIBW_TEST_COMMAND: "python -m pytest {project}/LayerDM -m runtime --verbose"
+        with:
+          package-dir: LayerDM
+          output-dir: wheelhouse
+
+      - name: Build wheel SDK
+        uses: pypa/cibuildwheel@v3.3.1
+        env:
+          CIBW_TEST_COMMAND: "python -m pytest {project}/LayerDM -m sdk --verbose"
+        with:
+          package-dir: LayerDMSDK
+          output-dir: wheelhouse
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: slicer_layer_md-${{ inputs.build-target }}
+          path: |
+            wheelhouse/slicer_layer_dm-*.whl
+            wheelhouse/slicer_layer_dm_sdk-*.whl
