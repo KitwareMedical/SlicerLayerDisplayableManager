@@ -1,0 +1,58 @@
+[build-system]
+requires = [
+  "scikit-build-core",
+  "slicer-core-sdk==5.11.0.*",
+  "vtk-sdk==9.6.0",
+  "vtk-sdk-python-wheel-helper"
+]
+build-backend = "scikit_build_core.build"
+
+[tool.scikit-build]
+cmake.source-dir = ".."
+cmake.args = ["-GNinja", "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_SDK=OFF"]
+
+[project]
+name = "slicer-layer-dm"
+version = "1.1.0"
+readme = "../README.md"
+description = "A slicer-core based library introducing a new displayable manager architecture for layered rendering and interaction handling."
+license = { text = "BSD 3-Clause License" }
+authors = [
+  { name = "Kitware Europe", email = "kitware@kitware.eu" },
+  { name = "Thibault Pelletier", email = "thibault.pelletier@kitware.com" },
+  { name = "Alexy Pellegrini", email = "alexy.pellegrini@kitware.com" }
+]
+keywords = ["Python", "VTK", "ITK", "3DSlicer", "Slicer", "Medical"]
+dependencies = ["slicer-core==5.11.0.*"]
+
+classifiers = [
+  "License :: OSI Approved :: Apache Software License",
+  "Natural Language :: English",
+  "Programming Language :: Python",
+  "Programming Language :: C++",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: Healthcare Industry",
+  "Intended Audience :: Science/Research",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Multimedia :: Graphics :: 3D Rendering",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Software Development :: Libraries",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS"
+]
+
+[project.urls]
+documentation = "https://slicerlayerdisplayablemanager.readthedocs.io"
+source = "https://github.com/KitwareMedical/SlicerLayerDisplayableManager"
+download = "https://pypi.org/project/slicer-layer-dm/#files"
+tracker = "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/issues"
+
+[project.optional-dependencies]
+test = ["pytest", "virtualenv"]

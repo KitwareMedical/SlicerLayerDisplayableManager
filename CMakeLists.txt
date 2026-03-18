@@ -1,25 +1,22 @@
-cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
+# CMake will complain if this is not in this file specifically
+cmake_minimum_required(VERSION 3.16.3...4.0)
 
-project(LayerDisplayableManager)
+# Most CMakeLists.txt files in this repo will have this conditional structure
+# SlicerLayerDM can be built in two different ways:
+# - A 3DSlicer extension
+# - A slicer-core based python wheel
+# Using include like this enables the CMake code to be in the expected
+# source/binary directory and add_subdirectory to work seamlessly
+if(DEFINED SKBUILD_PROJECT_NAME)
+  project(${SKBUILD_PROJECT_NAME} VERSION ${SKBUILD_PROJECT_VERSION})
+  include(${CMAKE_CURRENT_SOURCE_DIR}/wheel.cmake)
+else()
+  project(LayerDisplayableManager)
 
-#-----------------------------------------------------------------------------
-# Extension meta-information
-set(EXTENSION_HOMEPAGE "https://github.com/KitwareMedical/SlicerLayerDisplayableManager")
-set(EXTENSION_CONTRIBUTORS "Thibault Pelletier (Kitware SAS)")
-set(EXTENSION_DESCRIPTION "A 3D Slicer module introducing a new displayable manager architecture for layered rendering and interaction handling.")
-set(EXTENSION_ICONURL "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/LayerDisplayableManager.png")
-set(EXTENSION_SCREENSHOTURLS "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/raw/main/Docs/LayeredDisplayableManager_UML.jpg")
-set(EXTENSION_DEPENDS "NA") # Specified as a list or "NA" if no dependencies
+  # disable https://cmake.org/cmake/help/latest/policy/CMP0148.html as vtkAddon may need it
+  if(POLICY CMP0148)
+    cmake_policy(SET CMP0148 OLD)
+  endif()
 
-#-----------------------------------------------------------------------------
-# Extension dependencies
-find_package(Slicer REQUIRED)
-include(${Slicer_USE_FILE})
-
-#-----------------------------------------------------------------------------
-# Extension modules
-add_subdirectory(LayerDM)
-
-#-----------------------------------------------------------------------------
-include(${Slicer_EXTENSION_GENERATE_CONFIG})
-include(${Slicer_EXTENSION_CPACK})
+  include(${CMAKE_CURRENT_SOURCE_DIR}/extension.cmake)
+endif()

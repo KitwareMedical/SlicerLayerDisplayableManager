@@ -1,0 +1,8 @@
+NAME
+  Dummy::MRMLLayerDMPipeline
+LIBRARY_NAME
+  vtkDummyMRMLLayerDMPipeline
+DEPENDS
+  SlicerLayerDM::MRMLDisplayableManager
+DESCRIPTION
+  "vtkDummyMRMLLayerDMPipeline"

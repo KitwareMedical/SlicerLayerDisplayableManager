@@ -4,3 +4,6 @@
 /Docs/api/
 /Docs/doxygen/
 /node_modules/
+
+venv/
+*.whl

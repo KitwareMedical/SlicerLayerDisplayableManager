@@ -1,0 +1,5 @@
+[pytest]
+markers = [
+    "runtime: Run tests that only requires SlicerLayerDM runtime wheel",
+    "sdk: Run tests that requires both SlicerLayerDM and its SDK",
+]

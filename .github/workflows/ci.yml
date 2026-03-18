@@ -1,0 +1,33 @@
+name: CI Slicer Core
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        py-abi: ["cp310"]
+        include:
+          # Python version to install on host
+          - py-abi: cp310
+            python-version: "3.10"
+          # OS name to ciwheelbuild platform name
+          - os: ubuntu-latest
+            platform-tag: manylinux_2_28_x86_64
+            build-target: "manylinux_x86_64"
+          - os: windows-latest
+            platform-tag: win_amd64
+            build-target: "win_amd64"
+          - os: macos-latest
+            platform-tag: macosx_11_0_arm64
+            build-target: "macosx_arm64"
+    uses: ./.github/workflows/build-wheels.yml
+    with:
+      os: ${{ matrix.os }}
+      build-target: ${{ matrix.py-abi }}-${{ matrix.build-target }}
+      python-version: ${{ matrix.python-version }}
+      platform-tag: ${{ matrix.platform-tag }}
