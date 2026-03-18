@@ -45,9 +45,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true # tags are used to determine wheel version
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ inputs.python-version }}
+
       # Required to use MSVC with Ninja
       - uses: ilammy/msvc-dev-cmd@v1.13.0
 
