@@ -71,10 +71,16 @@ jobs:
           package-dir: LayerDMSDK
           output-dir: wheelhouse
 
-      - name: Upload wheels
+      - name: Upload runtime wheels
         uses: actions/upload-artifact@v4
         with:
           name: slicer_layer_dm-${{ inputs.build-target }}
           path: |
             wheelhouse/slicer_layer_dm-*.whl
+
+      - name: Upload SDK wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: slicer_layer_dm_sdk-${{ inputs.build-target }}
+          path: |
             wheelhouse/slicer_layer_dm_sdk-*.whl
