@@ -17,6 +17,7 @@ def test_build_module(virtualenv: VEnv, curdir: Path, tmp_path: Path):
         "scikit-build-core",
         "ninja",
         "cmake",
+        "setuptools-scm",
         "vtk-sdk-python-wheel-helper",
         "vtk-sdk==9.6.0",
         "slicer-core==5.11.0.*",
