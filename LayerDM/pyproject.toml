@@ -10,10 +10,11 @@ build-backend = "scikit_build_core.build"
 [tool.scikit-build]
 cmake.source-dir = ".."
 cmake.args = ["-GNinja", "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_SDK=OFF"]
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 
 [project]
 name = "slicer-layer-dm"
-version = "1.1.0"
+dynamic = ["version"]
 readme = "../README.md"
 description = "A slicer-core based library introducing a new displayable manager architecture for layered rendering and interaction handling."
 license = { text = "BSD 3-Clause License" }
@@ -53,6 +54,10 @@ documentation = "https://slicerlayerdisplayablemanager.readthedocs.io"
 source = "https://github.com/KitwareMedical/SlicerLayerDisplayableManager"
 download = "https://pypi.org/project/slicer-layer-dm/#files"
 tracker = "https://github.com/KitwareMedical/SlicerLayerDisplayableManager/issues"
+
+[tool.setuptools_scm]
+root = ".."
+git_describe_command = [ "git", "describe", "--tags", "--abbrev=0", "--match", "v[0-9]*"] # we are only interested by last tag name
 
 [project.optional-dependencies]
 test = ["pytest", "virtualenv"]
