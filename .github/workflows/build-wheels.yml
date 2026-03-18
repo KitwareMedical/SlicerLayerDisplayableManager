@@ -74,7 +74,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: slicer_layer_md-${{ inputs.build-target }}
+          name: slicer_layer_dm-${{ inputs.build-target }}
           path: |
             wheelhouse/slicer_layer_dm-*.whl
             wheelhouse/slicer_layer_dm_sdk-*.whl
