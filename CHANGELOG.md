@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.1 (2026-03-18)
+
+### Bug Fixes
+
+- Add setuptools-scm in test dependencies
+  ([`d2a6a20`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/d2a6a2017755e31e78fc0fa955e3c05c34fb90ee))
+
+
 ## v1.2.0 (2026-03-18)
 
 ### Bug Fixes
