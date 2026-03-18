@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.2 (2026-03-18)
+
+### Bug Fixes
+
+- Typo in artifacts names
+  ([`952b96f`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/952b96f17ead67a10b0a712acb154bd61bf0f406))
+
+
 ## v1.2.1 (2026-03-18)
 
 ### Bug Fixes
