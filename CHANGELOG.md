@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.3 (2026-03-18)
+
+### Bug Fixes
+
+- Split sdk and runtime wheels artifacts
+  ([`b8f48c5`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/b8f48c5763376db31fbb0d1cfedd1cb9b311ca31))
+
+
 ## v1.2.2 (2026-03-18)
 
 ### Bug Fixes
