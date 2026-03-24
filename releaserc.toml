@@ -1,0 +1,5 @@
+[semantic_release]
+tag_format = "v{version}"
+version_variables = [
+    "extension.cmake:LayerDM_VERSION:tf"
+]

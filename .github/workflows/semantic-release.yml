@@ -5,9 +5,6 @@ on: workflow_dispatch
 jobs:
   semantic-release:
     runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/trame-slicer
     permissions:
       id-token: write # IMPORTANT: mandatory for trusted publishing
       contents: write # IMPORTANT: mandatory for making GitHub Releases
@@ -25,3 +22,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           changelog: true
           build: false # build is too complex to be handled by semantic release
+          config_file: releaserc.toml
