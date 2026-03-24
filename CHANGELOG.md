@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.4 (2026-03-24)
+
+### Bug Fixes
+
+- Fix extension semantic tag
+  ([`a564e4e`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/a564e4e709a7921982f58af5f41895de5968acd7))
+
+
 ## v1.2.3 (2026-03-18)
 
 ### Bug Fixes
