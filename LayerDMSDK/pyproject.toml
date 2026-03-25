@@ -26,7 +26,7 @@ authors = [
 keywords = ["Python", "VTK", "ITK", "3DSlicer", "Slicer", "Medical"]
 
 classifiers = [
-  "License :: OSI Approved :: Apache Software License",
+  "License :: OSI Approved :: BSD License",
   "Natural Language :: English",
   "Programming Language :: Python",
   "Programming Language :: C++",
