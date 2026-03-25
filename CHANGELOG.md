@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.5 (2026-03-25)
+
+### Bug Fixes
+
+- **wheel-sdk**: Fix header install
+  ([`fb6998d`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/fb6998dddc3da274981d5fda93ef77e26e4b1ebe))
+
+
 ## v1.2.4 (2026-03-24)
 
 ### Bug Fixes
