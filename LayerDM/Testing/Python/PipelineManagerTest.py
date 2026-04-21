@@ -2,11 +2,11 @@ from unittest.mock import MagicMock
 
 import slicer
 from slicer import (
+    vtkMRMLAbstractViewNode,
     vtkMRMLLayerDMPipelineFactory,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMPipelineScriptedCreator,
-    vtkMRMLAbstractViewNode,
-    vtkMRMLInteractionEventData,
+    vtkMRMLLayerDMWidgetEventTranslationNode,
     vtkMRMLMarkupsFiducialNode,
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
@@ -114,7 +114,7 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m4.mockCanProcess.return_value = (False, 0)
 
         distance = ref(0.0)
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
 
         # Reported distance is the min of those that can process
         assert distance == 1
@@ -125,7 +125,7 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m3.mockProcess.return_value = False
         m4.mockProcess.return_value = True
 
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
         m4.mockProcess.assert_not_called()
         m3.mockProcess.assert_called_once()
         m2.mockProcess.assert_called_once()
@@ -141,8 +141,8 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m2.mockProcess.return_value = True
 
         distance = ref(0.0)
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
         m1.mockProcess.assert_called_once()
 
         # At second interaction m1 should have focus and not m2
@@ -150,8 +150,8 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m1.mockCanProcess.return_value = (True, 10000)
         m2.mockCanProcess.return_value = (True, 0)
         m1.mockGetWidgetState.return_value = 100
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
 
         # Expect m1 to have handled the interaction regardless of m2 proximity
         assert m1.mockProcess.call_count == 2
@@ -165,14 +165,11 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m1.mockProcess.return_value = True
 
         distance = ref(0.0)
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
 
-        loseFocusData = vtkMRMLInteractionEventData()
-        self.pipelineManager.LoseFocus(loseFocusData)
-        self.pipelineManager.LoseFocus(None)
         self.pipelineManager.LoseFocus()
-        m1.mockLoseFocus.assert_called_once_with(loseFocusData)
+        m1.mockLoseFocus.assert_called_once()
 
     def test_if_last_with_focus_cannot_process_loses_focus(self):
         m1 = self.triggerMockPipelineCreation(MockPipeline(renderOrder=1))
@@ -181,21 +178,21 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m2.mockCanProcess.return_value = (False, 0)
 
         distance = ref(0.0)
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
 
         m1.mockProcess.return_value = True
         m2.mockProcess.return_value = True
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
         m1.mockProcess.assert_called_once()
 
         m1.mockProcess.reset_mock()
         m1.mockCanProcess.return_value = (False, 0)
         m2.mockCanProcess.return_value = (True, 0)
 
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
         m1.mockLoseFocus.assert_called_once()
 
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
         m1.mockProcess.assert_not_called()
         m2.mockProcess.assert_called_once()
 
@@ -206,20 +203,20 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m2.mockCanProcess.return_value = (False, 0)
 
         distance = ref(0.0)
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
 
         m1.mockProcess.return_value = True
         m2.mockProcess.return_value = True
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
 
         m1.mockProcess.reset_mock()
         m1.mockProcess.return_value = False
         m1.mockGetWidgetState.return_value = 100
         m2.mockCanProcess.return_value = (True, 0)
-        assert self.pipelineManager.CanProcessInteractionEvent(vtkMRMLInteractionEventData(), distance)
+        assert self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
         m1.mockLoseFocus.assert_not_called()
 
-        assert self.pipelineManager.ProcessInteractionEvent(vtkMRMLInteractionEventData())
+        assert self.pipelineManager.ProcessInteractionEvent(self._create_event())
         m1.mockProcess.assert_called_once()
         m2.mockProcess.assert_called_once()
         m1.mockLoseFocus.assert_called_once()
@@ -268,7 +265,9 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         modelNodes = [slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode") for _ in range(5)]
         for modelNode in modelNodes:
             self.pipelineManager.AddNode(modelNode)
-        pipelines = [self.pipelineManager.GetNthPipeline(i_pipe) for i_pipe in range(self.pipelineManager.GetNumberOfPipelines())]
+        pipelines = [
+            self.pipelineManager.GetNthPipeline(i_pipe) for i_pipe in range(self.pipelineManager.GetNumberOfPipelines())
+        ]
         modelPipelines = [p for p in pipelines if p.GetDisplayNode() in modelNodes]
         assert len(modelPipelines) == 5
         prevNumber = self.pipelineManager.GetNumberOfPipelines()
@@ -296,3 +295,7 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         # Unset the display node and expect the pipeline to have been notified
         markups.SetAndObserveDisplayNodeID("")
         m1.mockOnReferenceToDisplayNodeRemoved.assert_called_once_with(markups, "display")
+
+    @classmethod
+    def _create_event(cls):
+        return vtkMRMLLayerDMWidgetEventTranslationNode.CreateTestEventData(0, 0)

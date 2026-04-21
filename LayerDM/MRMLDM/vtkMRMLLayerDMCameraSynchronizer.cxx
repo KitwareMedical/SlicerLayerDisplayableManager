@@ -179,7 +179,7 @@ void vtkMRMLLayerDMCameraSynchronizer::SetViewNode(vtkMRMLAbstractViewNode* view
   this->UpdateStrategy();
 }
 
-void vtkMRMLLayerDMCameraSynchronizer::SetDefaultCamera(const vtkSmartPointer<vtkCamera>& camera)
+void vtkMRMLLayerDMCameraSynchronizer::SetDefaultCamera(vtkCamera* camera)
 {
   if (this->m_defaultCamera == camera)
   {

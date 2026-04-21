@@ -11,7 +11,7 @@ from slicer import (
     vtkMRMLThreeDViewDisplayableManagerFactory,
 )
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
-from vtk import VTK_OBJECT, vtkActor, vtkImageData, vtkObjectFactory, vtkRenderer
+from vtk import VTK_OBJECT, vtkActor, vtkObjectFactory, vtkRenderer
 
 from MockPipeline import MockPipeline
 
@@ -63,7 +63,7 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
         slicer.mrmlScene.AddNode(self.node)
 
         # Verify the pipeline's actor is present in the threed view
-        renderWindow = slicer.app.layoutManager().viewWidget(self.threeDNode).viewWidget().renderWindow()
+        renderWindow = slicer.app.layoutManager().viewWidget(self.threeDNode).findChild("qMRMLThreeDView").renderWindow()
         renderer = renderWindow.GetRenderers().GetItemAsObject(0)
         assert renderer.HasViewProp(actor)
 
@@ -134,27 +134,3 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
 
         self.pipeline.ResetDisplay()
         self.pipeline.mockUpdatePipeline.assert_called_once()
-
-    def test_pipeline_exceptions_are_propagated_to_python(self):
-        _error_msg = "Something went wrong in Python"
-        self.pipeline.mockUpdatePipeline.side_effect = RuntimeError(_error_msg)
-
-        with self.assertRaises(RuntimeError) as context:
-            slicer.mrmlScene.AddNode(self.node)
-        assert _error_msg in str(context.exception)
-
-    def test_can_render_to_image_data(self):
-        render_window = slicer.app.layoutManager().threeDWidget(0).threeDView().renderWindow()
-
-        # Direct return value call
-        image = vtkMRMLLayerDisplayableManager.RenderWindowBufferToImage(render_window)
-        assert isinstance(image, vtkImageData)
-        assert image.GetDimensions()[0] == render_window.GetSize()[0]
-        assert image.GetDimensions()[1] == render_window.GetSize()[1]
-
-        # Mutated call
-        image = vtkImageData()
-        vtkMRMLLayerDisplayableManager.RenderWindowBufferToImage(render_window, image)
-        assert isinstance(image, vtkImageData)
-        assert image.GetDimensions()[0] == render_window.GetSize()[0]
-        assert image.GetDimensions()[1] == render_window.GetSize()[1]

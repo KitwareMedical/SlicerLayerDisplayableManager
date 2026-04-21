@@ -40,6 +40,7 @@ public:
   /// \param distance2: Return value for the distance to the interaction (preferably actual RAS distance)
   /// \return true if the pipeline can process the input event data. Default = false;
   virtual bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2);
+  bool CanProcessInteractionEvent(vtkObjectBase* eventData, double& distance2);
 
   /// Custom pipeline camera.
   /// If the returned value is not nullptr, then the pipeline (or dedicated logic) is expected to handle its own camera.
@@ -95,6 +96,7 @@ public:
   /// \param eventData: The MRML event needing to be processed
   /// \return True if event was processed. False otherwise (default = false)
   virtual bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData);
+  bool ProcessInteractionEvent(vtkObjectBase* eventData);
 
   /// Set the display node for the pipeline has changed (initialization).
   /// default behavior: Stored and display node is observed for vtkCommand::ModifiedEvent.
@@ -151,8 +153,9 @@ public:
   /// On event triggered, calls \sa OnUpdate
   ///
   /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
-  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const;
+  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const;
+  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, int n_events, unsigned long events[]) const;
   /// @}
 
   /// Remove all observed events for the input object.

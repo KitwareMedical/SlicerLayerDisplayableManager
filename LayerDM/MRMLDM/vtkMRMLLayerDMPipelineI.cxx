@@ -2,9 +2,10 @@
 
 // Layer DM includes
 #include "vtkMRMLAbstractWidget.h"
+#include "vtkMRMLInteractionEventData.h"
+#include "vtkMRMLLayerDMObjectEventObserver.h"
 #include "vtkMRMLLayerDMPipelineManager.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLLayerDMObjectEventObserver.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -69,9 +70,19 @@ bool vtkMRMLLayerDMPipelineI::CanProcessInteractionEvent(vtkMRMLInteractionEvent
   return false;
 }
 
+bool vtkMRMLLayerDMPipelineI::CanProcessInteractionEvent(vtkObjectBase* eventData, double& distance2)
+{
+  return this->CanProcessInteractionEvent(vtkMRMLInteractionEventData::SafeDownCast(eventData), distance2);
+}
+
 bool vtkMRMLLayerDMPipelineI::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   return false;
+}
+
+bool vtkMRMLLayerDMPipelineI::ProcessInteractionEvent(vtkObjectBase* eventData)
+{
+  return this->ProcessInteractionEvent(vtkMRMLInteractionEventData::SafeDownCast(eventData));
 }
 
 int vtkMRMLLayerDMPipelineI::GetMouseCursor() const
@@ -106,6 +117,11 @@ bool vtkMRMLLayerDMPipelineI::UpdateObserver(vtkObject* prevObj, vtkObject* obj,
 bool vtkMRMLLayerDMPipelineI::UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const
 {
   return this->m_obs->UpdateObserver(prevObj, obj, events);
+}
+
+bool vtkMRMLLayerDMPipelineI::UpdateObserver(vtkObject* prevObj, vtkObject* obj, int n_events, unsigned long events[]) const
+{
+  return this->m_obs->UpdateObserver(prevObj, obj, n_events, events);
 }
 
 unsigned int vtkMRMLLayerDMPipelineI::GetRenderOrder() const

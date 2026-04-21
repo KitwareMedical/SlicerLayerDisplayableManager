@@ -78,6 +78,11 @@ bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkOb
   return true;
 }
 
+bool vtkMRMLLayerDMObjectEventObserver::UpdateObserver(vtkObject* prevObj, vtkObject* obj, int n_events, unsigned long events[])
+{
+  return this->UpdateObserver(prevObj, obj, std::vector<unsigned long>(events, events + n_events));
+}
+
 void vtkMRMLLayerDMObjectEventObserver::SetUpdateCallback(const std::function<void(vtkObject* node)>& callback)
 {
   this->m_callback = callback;

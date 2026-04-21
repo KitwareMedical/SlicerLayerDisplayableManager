@@ -32,7 +32,7 @@ public:
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
 
   /// Set the default camera which will be synchronized by this class.
-  void SetDefaultCamera(const vtkSmartPointer<vtkCamera>& camera);
+  void SetDefaultCamera(vtkCamera* camera);
 
   /// Set the default renderer used by the displayable manager.
   /// The renderer active camera will be monitored for change when applicable (for instance 3D views).

@@ -63,7 +63,7 @@ public:
   void SetRenderWindow(vtkRenderWindow* renderWindow);
 
   /// If the default camera has changed, update the layers with ne new camera
-  void SetDefaultCamera(const vtkSmartPointer<vtkCamera>& camera);
+  void SetDefaultCamera(vtkCamera* camera);
 
 protected:
   vtkMRMLLayerDMLayerManager();

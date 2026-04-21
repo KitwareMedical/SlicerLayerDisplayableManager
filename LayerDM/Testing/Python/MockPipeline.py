@@ -1,5 +1,5 @@
 import sys
-from typing import Any
+from typing import Any, Optional, Tuple
 from unittest.mock import MagicMock
 
 from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
@@ -48,10 +48,10 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
         self.mockSetPipelineManager = MagicMock()
         self.mockUpdatePipeline = MagicMock()
 
-    def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
+    def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> Tuple[bool, float]:
         return self.mockCanProcess(eventData)
 
-    def GetCustomCamera(self) -> vtkCamera | None:
+    def GetCustomCamera(self) -> Optional[vtkCamera]:
         return self.mockGetCustomCamera()
 
     def GetMouseCursor(self) -> int:
@@ -69,10 +69,10 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
     def OnDefaultCameraModified(self, camera: vtkCamera) -> None:
         self.mockOnDefaultCameraModified(camera)
 
-    def OnReferenceToDisplayNodeAdded(self, fromNode: vtkMRMLNode | None, role: str) -> None:
+    def OnReferenceToDisplayNodeAdded(self, fromNode: Optional[vtkMRMLNode], role: str) -> None:
         self.mockOnReferenceToDisplayNodeAdded(fromNode, role)
 
-    def OnReferenceToDisplayNodeRemoved(self, fromNode: vtkMRMLNode | None, role: str) -> None:
+    def OnReferenceToDisplayNodeRemoved(self, fromNode: Optional[vtkMRMLNode], role: str) -> None:
         self.mockOnReferenceToDisplayNodeRemoved(fromNode, role)
 
     def OnRendererAdded(self, renderer: vtkRenderer) -> None:

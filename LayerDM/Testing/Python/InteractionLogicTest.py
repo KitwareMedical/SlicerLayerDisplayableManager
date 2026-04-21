@@ -1,5 +1,5 @@
 import slicer
-from slicer import vtkMRMLLayerDMInteractionLogic, vtkMRMLInteractionEventData, vtkMRMLAbstractWidget
+from slicer import vtkMRMLLayerDMInteractionLogic, vtkMRMLLayerDMWidgetEventTranslationNode, vtkMRMLAbstractWidget
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import reference, vtkCommand
 
@@ -10,7 +10,7 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
     def setUp(self):
         slicer.mrmlScene.Clear(0)
         self.distance = reference(0.0)
-        self.event = vtkMRMLInteractionEventData()
+        self.event = vtkMRMLLayerDMWidgetEventTranslationNode.CreateTestEventData(0, 0)
         self.logic = vtkMRMLLayerDMInteractionLogic()
 
     def test_with_no_pipelines_cannot_process(self):
@@ -72,7 +72,7 @@ class InteractionLogicTest(ScriptedLoadableModuleTest):
         assert self.logic.CanProcessInteractionEvent(self.event, self.distance)
         assert self.logic.ProcessInteractionEvent(self.event)
 
-        self.event.SetType(vtkCommand.LeaveEvent)
+        self.event = vtkMRMLLayerDMWidgetEventTranslationNode.CreateTestEventData(vtkCommand.LeaveEvent, 0)
         assert not self.logic.CanProcessInteractionEvent(self.event, self.distance)
         pipeline.mockLoseFocus.assert_called_once_with(self.event)
 

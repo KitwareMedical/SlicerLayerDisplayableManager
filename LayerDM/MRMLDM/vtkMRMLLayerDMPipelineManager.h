@@ -45,6 +45,7 @@ public:
 
   /// Delegates can process interaction event to \sa vtkMRMLLayerDMInteractionLogic
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) const;
+  bool CanProcessInteractionEvent(vtkObjectBase* eventData, double& distance2) const;
 
   /// Create a new pipeline associated with the input display node.
   /// Delegates to \sa vtkMRMLLayerDMPipelineFactory::CreatePipeline.
@@ -62,7 +63,7 @@ public:
   int GetMouseCursor() const;
 
   /// Returns the pipeline associated with the input display node if any.
-  vtkSmartPointer<vtkMRMLLayerDMPipelineI> GetNodePipeline(vtkMRMLNode* node) const;
+  vtkMRMLLayerDMPipelineI* GetNodePipeline(vtkMRMLNode* node) const;
 
   /// Returns the number of pipelines currently managed by the pipeline manager
   int GetNumberOfPipelines() const;
@@ -80,6 +81,7 @@ public:
 
   /// Delegates process interaction event to \sa vtkMRMLLayerDMInteractionLogic
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) const;
+  bool ProcessInteractionEvent(vtkObjectBase* eventData) const;
 
   /// @{
   /// Remove node from the pipeline manager if any pipeline is associated to the input node.
@@ -97,6 +99,7 @@ public:
   /// Set the Pipeline factory to use by the pipeline manager (initialization).
   /// On factory-modified event, will trigger a \sa UpdateFromScene.
   void SetFactory(const vtkSmartPointer<vtkMRMLLayerDMPipelineFactory>& factory);
+  void SetFactory(vtkMRMLLayerDMPipelineFactory* factory);
 
   /// Set the render window on which the pipeline manager is attached (initialization).
   void SetRenderWindow(vtkRenderWindow* renderWindow);

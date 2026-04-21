@@ -91,7 +91,7 @@ void vtkMRMLLayerDMInteractionLogic::LosePreviousFocusInCannotProcess(vtkMRMLInt
   }
 }
 
-void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline)
+void vtkMRMLLayerDMInteractionLogic::AddPipeline(vtkMRMLLayerDMPipelineI* pipeline)
 {
   if (std::find(this->m_pipelines.begin(), this->m_pipelines.end(), pipeline) != this->m_pipelines.end())
   {
@@ -100,7 +100,7 @@ void vtkMRMLLayerDMInteractionLogic::AddPipeline(const vtkSmartPointer<vtkMRMLLa
   this->m_pipelines.emplace_back(pipeline);
 }
 
-void vtkMRMLLayerDMInteractionLogic::RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline)
+void vtkMRMLLayerDMInteractionLogic::RemovePipeline(vtkMRMLLayerDMPipelineI* pipeline)
 {
   this->m_pipelines.erase(std::find(this->m_pipelines.begin(), this->m_pipelines.end(), pipeline));
 }
@@ -129,6 +129,11 @@ bool vtkMRMLLayerDMInteractionLogic::CanProcessInteractionEvent(vtkMRMLInteracti
   return !this->m_canProcess.empty();
 }
 
+bool vtkMRMLLayerDMInteractionLogic::CanProcessInteractionEvent(vtkObjectBase* eventData, double& distance2)
+{
+  return this->CanProcessInteractionEvent(vtkMRMLInteractionEventData::SafeDownCast(eventData), distance2);
+}
+
 bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData)
 {
   for (const auto& pipeline : m_canProcess)
@@ -148,4 +153,9 @@ bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkMRMLInteractionE
   // If no pipeline was able to process interaction, lose focus
   this->LoseFocus(eventData);
   return false;
+}
+
+bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkObjectBase* eventData)
+{
+  return this->ProcessInteractionEvent(vtkMRMLInteractionEventData::SafeDownCast(eventData));
 }

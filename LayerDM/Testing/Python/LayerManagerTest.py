@@ -3,6 +3,7 @@ from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
 from slicer import vtkMRMLLayerDMLayerManager
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkActor, vtkCamera, vtkPolyDataMapper, vtkRenderWindow, vtkRenderer, vtkSphereSource
+from typing import List, Optional
 
 
 class Pipeline(vtkMRMLLayerDMScriptedPipeline):
@@ -11,7 +12,7 @@ class Pipeline(vtkMRMLLayerDMScriptedPipeline):
     """
 
     def __init__(
-        self, renderOrder: int = 0, camera: vtkCamera = None, radius: float = 2, center: list[float] | None = None
+        self, renderOrder: int = 0, camera: vtkCamera = None, radius: float = 2, center: Optional[List[float]] = None
     ):
         super().__init__()
         center = center or [0.0] * 3
@@ -27,7 +28,7 @@ class Pipeline(vtkMRMLLayerDMScriptedPipeline):
         self._actor = vtkActor()
         self._actor.SetMapper(self._mapper)
 
-    def OnRendererAdded(self, renderer: vtkRenderer | None) -> None:
+    def OnRendererAdded(self, renderer: Optional[vtkRenderer]) -> None:
         if not renderer or renderer.HasViewProp(self._actor):
             return
 
@@ -42,7 +43,7 @@ class Pipeline(vtkMRMLLayerDMScriptedPipeline):
     def GetRenderOrder(self) -> int:
         return self._renderOrder
 
-    def GetCustomCamera(self) -> vtkCamera | None:
+    def GetCustomCamera(self) -> Optional[vtkCamera]:
         return self._camera
 
 
@@ -89,7 +90,7 @@ class LayerManagerTest(ScriptedLoadableModuleTest):
         assert list(actLayers) == list(expRenderLayers)
 
     @staticmethod
-    def get_pipelines_renderers(pipelines: list[Pipeline]) -> list[vtkRenderer]:
+    def get_pipelines_renderers(pipelines: List[Pipeline]) -> List[vtkRenderer]:
         return list({pipeline.GetRenderer() for pipeline in pipelines})
 
     def configure_layer_manager_with_multiple_pipelines(self):

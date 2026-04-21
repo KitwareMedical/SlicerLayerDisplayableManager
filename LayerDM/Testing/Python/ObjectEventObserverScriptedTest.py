@@ -28,7 +28,7 @@ class vtkMRMLLayerDMObjectEventObserverTest(ScriptedLoadableModuleTest):
     def test_can_be_attached_to_multiple_events(self):
         markups_node = vtkMRMLMarkupsFiducialNode()
 
-        self.observer.UpdateObserver(None, markups_node, [vtkCommand.ModifiedEvent, markups_node.PointModifiedEvent])
+        self.observer.UpdateObserver(None, markups_node, 2, [vtkCommand.ModifiedEvent, markups_node.PointModifiedEvent])
         markups_node.InvokeEvent(markups_node.PointModifiedEvent)
         self.mock.assert_called_once_with(markups_node, markups_node.PointModifiedEvent, None)
 
