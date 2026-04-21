@@ -50,7 +50,7 @@ class CameraSynchronizerTest(ScriptedLoadableModuleTest):
         assert preMTime != self.defaultCam.GetMTime()
         preMTime = self.defaultCam.GetMTime()
 
-        sliceNode.SetXYZOrigin([1, 2, 3])
+        sliceNode.SetXYZOrigin(*[1, 2, 3])
         assert preMTime != self.defaultCam.GetMTime()
 
     def test_updating_the_default_camera_triggers_camera_update_once(self):
@@ -76,7 +76,7 @@ class CameraSynchronizerTest(ScriptedLoadableModuleTest):
         self.cameraSync.SetViewNode(sliceNode)
         self.mockModified.reset_mock()
 
-        sliceNode.SetXYZOrigin([1, 2, 3])
+        sliceNode.SetXYZOrigin(*[1, 2, 3])
         self.mockModified.assert_called_once()
 
     def test_at_init_updates_trigger_camera_update_once(self):

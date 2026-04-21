@@ -91,12 +91,20 @@ public:
   /// \sa BlockTranslationEvent
   /// \sa BlockAllTranslationEvents
   unsigned long Translate(int widgetState, vtkMRMLInteractionEventData* eventData);
+  unsigned long Translate(int widgetState, vtkObjectBase* eventData);
 
   /// Clears all widget translations contained in the node
   void Clear();
 
   /// \return the number of event translations currently mapped.
   int GetNumberOfTranslations() const;
+
+  /// For testing only. Returns a new vtkMRMLInteractionEventData with given type, modifier
+  static vtkObjectBase* CreateTestEventData(unsigned long eventType, int modifier, int repeatCount = 1, const std::string& keySym = "");
+
+  /// \returns input event data world position and display positions
+  /// Required for Slicer 4.11 Python compatibility
+  static bool GetEventPositions(vtkObjectBase* eventData, double worldPosition[3], int displayPosition[2]);
 
 protected:
   vtkMRMLLayerDMWidgetEventTranslationNode() = default;

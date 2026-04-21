@@ -11,6 +11,7 @@
 
 // Slicer includes
 #include "vtkMRMLAbstractViewNode.h"
+#include "vtkMRMLInteractionEventData.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -168,6 +169,11 @@ void vtkMRMLLayerDMPipelineManager::SetFactory(const vtkSmartPointer<vtkMRMLLaye
   this->UpdateFromScene();
 }
 
+void vtkMRMLLayerDMPipelineManager::SetFactory(vtkMRMLLayerDMPipelineFactory* factory)
+{
+  SetFactory(vtkSmartPointer<vtkMRMLLayerDMPipelineFactory>{ factory });
+}
+
 int vtkMRMLLayerDMPipelineManager::GetMouseCursor() const
 {
   auto lastFocused = this->m_interactionLogic->GetLastFocusedPipeline();
@@ -177,6 +183,11 @@ int vtkMRMLLayerDMPipelineManager::GetMouseCursor() const
 bool vtkMRMLLayerDMPipelineManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) const
 {
   return this->m_interactionLogic->CanProcessInteractionEvent(eventData, distance2);
+}
+
+bool vtkMRMLLayerDMPipelineManager::CanProcessInteractionEvent(vtkObjectBase* eventData, double& distance2) const
+{
+  return this->CanProcessInteractionEvent(vtkMRMLInteractionEventData::SafeDownCast(eventData), distance2);
 }
 
 void vtkMRMLLayerDMPipelineManager::LoseFocus(vtkMRMLInteractionEventData* eventData) const
@@ -192,6 +203,11 @@ void vtkMRMLLayerDMPipelineManager::LoseFocus() const
 bool vtkMRMLLayerDMPipelineManager::ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) const
 {
   return this->m_interactionLogic->ProcessInteractionEvent(eventData);
+}
+
+bool vtkMRMLLayerDMPipelineManager::ProcessInteractionEvent(vtkObjectBase* eventData) const
+{
+  return this->ProcessInteractionEvent(vtkMRMLInteractionEventData::SafeDownCast(eventData));
 }
 
 bool vtkMRMLLayerDMPipelineManager::RemoveNode(vtkMRMLNode* node)
@@ -292,7 +308,7 @@ void vtkMRMLLayerDMPipelineManager::UpdatePipeline(const vtkSmartPointer<vtkMRML
   pipeline->SetViewNode(this->m_viewNode);
 }
 
-vtkSmartPointer<vtkMRMLLayerDMPipelineI> vtkMRMLLayerDMPipelineManager::GetNodePipeline(vtkMRMLNode* node) const
+vtkMRMLLayerDMPipelineI* vtkMRMLLayerDMPipelineManager::GetNodePipeline(vtkMRMLNode* node) const
 {
   const auto found = this->m_pipelineMap.find(node);
   if (found == std::end(this->m_pipelineMap))

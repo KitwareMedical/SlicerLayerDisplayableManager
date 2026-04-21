@@ -101,7 +101,7 @@ void vtkMRMLLayerDMLayerManager::SetRenderWindow(vtkRenderWindow* renderWindow)
   this->UpdateLayers();
 }
 
-void vtkMRMLLayerDMLayerManager::SetDefaultCamera(const vtkSmartPointer<vtkCamera>& camera)
+void vtkMRMLLayerDMLayerManager::SetDefaultCamera(vtkCamera* camera)
 {
   if (this->m_defaultCamera == camera)
   {

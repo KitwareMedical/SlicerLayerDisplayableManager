@@ -178,6 +178,11 @@ unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(int widgetStat
   return this->Translate(key);
 }
 
+unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(int widgetState, vtkObjectBase* eventData)
+{
+  return this->Translate(widgetState, vtkMRMLInteractionEventData::SafeDownCast(eventData));
+}
+
 void vtkMRMLLayerDMWidgetEventTranslationNode::Clear()
 {
   this->EventMap.clear();
@@ -187,6 +192,29 @@ void vtkMRMLLayerDMWidgetEventTranslationNode::Clear()
 int vtkMRMLLayerDMWidgetEventTranslationNode::GetNumberOfTranslations() const
 {
   return static_cast<int>(this->EventMap.size());
+}
+
+vtkObjectBase* vtkMRMLLayerDMWidgetEventTranslationNode::CreateTestEventData(unsigned long eventType, int modifier, int repeatCount, const std::string& keySym)
+{
+  auto eventData = vtkMRMLInteractionEventData::New();
+  eventData->SetType(eventType);
+  eventData->SetModifiers(modifier);
+  eventData->SetKeyRepeatCount(repeatCount);
+  eventData->SetKeySym(keySym);
+  return eventData;
+}
+
+bool vtkMRMLLayerDMWidgetEventTranslationNode::GetEventPositions(vtkObjectBase* eventData, double worldPosition[3], int displayPosition[2])
+{
+  auto castEvent = vtkMRMLInteractionEventData::SafeDownCast(eventData);
+  if (!castEvent)
+  {
+    return false;
+  }
+
+  castEvent->GetWorldPosition(worldPosition);
+  castEvent->GetDisplayPosition(displayPosition);
+  return true;
 }
 
 unsigned long vtkMRMLLayerDMWidgetEventTranslationNode::Translate(EventKey key) const

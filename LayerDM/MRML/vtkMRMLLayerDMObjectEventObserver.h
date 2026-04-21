@@ -37,6 +37,7 @@ public:
   /// \warning prevObj is not mutated by this call. To update the pointer, a manual set is required after update.
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent);
   bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events);
+  bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, int n_events, unsigned long events[]) VTK_SIZEHINT(events, n_events);
   /// @}
 
   /// Remove observers attached to the input object.

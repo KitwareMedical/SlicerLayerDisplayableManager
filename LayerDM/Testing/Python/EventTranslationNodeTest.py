@@ -2,7 +2,7 @@ import os
 from tempfile import TemporaryDirectory
 
 import slicer
-from slicer import vtkMRMLAbstractWidget, vtkMRMLInteractionEventData
+from slicer import vtkMRMLAbstractWidget, vtkMRMLLayerDMWidgetEventTranslationNode
 from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkCommand, vtkEvent
 
@@ -25,16 +25,11 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
         return slicer.mrmlScene.GetNodeByID(node_id)
 
     def click_event(self, event_type, modifier=vtkEvent.AnyModifier):
-        event_data = vtkMRMLInteractionEventData()
-        event_data.SetType(event_type)
-        event_data.SetModifiers(modifier)
+        event_data = vtkMRMLLayerDMWidgetEventTranslationNode.CreateTestEventData(event_type, modifier)
         return event_data
 
     def key_event(self, key, *, modifier=vtkEvent.AnyModifier):
-        event_data = vtkMRMLInteractionEventData()
-        event_data.SetType(vtkCommand.KeyPressEvent)
-        event_data.SetModifiers(modifier)
-        event_data.SetKeySym(key)
+        event_data = vtkMRMLLayerDMWidgetEventTranslationNode.CreateTestEventData(vtkCommand.KeyPressEvent, modifier, 1, key)
         return event_data
 
     def test_can_be_created_from_scene(self):

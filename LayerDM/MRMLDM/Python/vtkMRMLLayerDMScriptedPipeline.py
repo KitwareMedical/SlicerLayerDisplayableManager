@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional, Tuple
 
 from slicer import (
     vtkMRMLAbstractViewNode,
@@ -35,7 +35,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         return self.GetDisplayNode()
 
-    def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> tuple[bool, float]:
+    def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> Tuple[bool, float]:
         """
         Should return true + distance2 to interaction if the pipeline can process the input event data.
         :param eventData: The MRML event needing to be processed
@@ -45,7 +45,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
 
         return False, sys.float_info.max
 
-    def GetCustomCamera(self) -> vtkCamera | None:
+    def GetCustomCamera(self) -> Optional[vtkCamera]:
         """
         Custom pipeline camera.
         If the returned value is not None, then the pipeline (or dedicated logic) is expected to handle its own camera.
@@ -81,7 +81,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         return vtkMRMLAbstractWidget.WidgetStateIdle
 
-    def LoseFocus(self, eventData: vtkMRMLInteractionEventData | None) -> None:
+    def LoseFocus(self, eventData: Optional[vtkMRMLInteractionEventData]) -> None:
         """
         Triggered when the pipeline had focus (processed an interaction) and loses the focus (other pipeline
         handled the new interaction or window leave event).
@@ -98,7 +98,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         pass
 
-    def OnReferenceToDisplayNodeAdded(self, fromNode: vtkMRMLNode | None, role:str) -> None:
+    def OnReferenceToDisplayNodeAdded(self, fromNode: Optional[vtkMRMLNode], role:str) -> None:
         """
         Triggered when a reference to the display node is added
         default behavior: does nothing.
@@ -109,7 +109,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         pass
 
-    def OnReferenceToDisplayNodeRemoved(self, fromNode: vtkMRMLNode | None, role:str) -> None:
+    def OnReferenceToDisplayNodeRemoved(self, fromNode: Optional[vtkMRMLNode], role:str) -> None:
         """
         Triggered when a reference to the display node is removed
         default behavior: does nothing.
@@ -120,7 +120,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         pass
 
-    def OnRendererAdded(self, renderer: vtkRenderer | None) -> None:
+    def OnRendererAdded(self, renderer: Optional[vtkRenderer]) -> None:
         """
         Triggered when the pipeline is displayed on a new renderer.
         default behavior: does nothing.
@@ -143,7 +143,7 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         """
         pass
 
-    def OnUpdate(self, obj: vtkObject, eventId: int, callData: Any | None) -> None:
+    def OnUpdate(self, obj: vtkObject, eventId: int, callData: Optional[Any]) -> None:
         """
         Observer update callback.
         Triggered when any object & events observed using UpdateObserver is triggered.

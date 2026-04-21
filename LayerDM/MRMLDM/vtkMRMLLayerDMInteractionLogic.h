@@ -29,14 +29,16 @@ public:
   static vtkMRMLLayerDMInteractionLogic* New();
   vtkTypeMacro(vtkMRMLLayerDMInteractionLogic, vtkObject);
 
-  void AddPipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline);
+  void AddPipeline(vtkMRMLLayerDMPipelineI* pipeline);
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2);
+  bool CanProcessInteractionEvent(vtkObjectBase* eventData, double& distance2);
   std::vector<vtkSmartPointer<vtkMRMLLayerDMPipelineI>> GetCanProcessPipelines() const;
   vtkMRMLLayerDMPipelineI* GetLastFocusedPipeline() const;
   void LoseFocus(vtkMRMLInteractionEventData* eventData);
   void LoseFocus();
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData);
-  void RemovePipeline(const vtkSmartPointer<vtkMRMLLayerDMPipelineI>& pipeline);
+  bool ProcessInteractionEvent(vtkObjectBase* eventData);
+  void RemovePipeline(vtkMRMLLayerDMPipelineI* pipeline);
   void SetViewNode(vtkMRMLAbstractViewNode* viewNode);
 
 protected:
