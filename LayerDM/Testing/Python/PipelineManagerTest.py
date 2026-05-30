@@ -299,3 +299,24 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
     @classmethod
     def _create_event(cls):
         return vtkMRMLLayerDMWidgetEventTranslationNode.CreateTestEventData(0, 0)
+
+    def test_pipelines_removed_are_frozen_during_cleanup(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline())
+        assert not m1.IsFrozen()
+
+        self.pipelineManager.RemoveNode(m1.GetDisplayNode())
+        assert m1.IsFrozen()
+
+    def test_pipelines_removed_while_having_interaction_lose_focus_during_cleanup(self):
+        m1 = self.triggerMockPipelineCreation(MockPipeline())
+        m1.mockCanProcess.return_value = (True, 0.0)
+        m1.mockProcess.return_value = True
+
+        distance = ref(0.0)
+        self.pipelineManager.CanProcessInteractionEvent(self._create_event(), distance)
+        self.pipelineManager.ProcessInteractionEvent(self._create_event())
+        m1.mockProcess.assert_called_once()
+        m1.mockLoseFocus.assert_not_called()
+
+        self.pipelineManager.RemoveNode(m1.GetDisplayNode())
+        m1.mockLoseFocus.assert_called_once()

@@ -64,6 +64,11 @@ std::tuple<double, int> vtkMRMLLayerDMInteractionLogic::PrioritizeCanProcessPipe
   int maxState = this->MinWidgetState();
   for (const auto& pipeline : m_pipelines)
   {
+    if (pipeline->IsInteractionProcessingBlocked())
+    {
+      continue;
+    }
+
     double pipelineDistance = std::numeric_limits<double>::max();
     if (pipeline->CanProcessInteractionEvent(eventData, pipelineDistance))
     {
@@ -102,6 +107,10 @@ void vtkMRMLLayerDMInteractionLogic::AddPipeline(vtkMRMLLayerDMPipelineI* pipeli
 
 void vtkMRMLLayerDMInteractionLogic::RemovePipeline(vtkMRMLLayerDMPipelineI* pipeline)
 {
+  if (this->m_prevFocusedPipeline == pipeline)
+  {
+    this->LoseFocus();
+  }
   this->m_pipelines.erase(std::find(this->m_pipelines.begin(), this->m_pipelines.end(), pipeline));
 }
 
@@ -138,6 +147,11 @@ bool vtkMRMLLayerDMInteractionLogic::ProcessInteractionEvent(vtkMRMLInteractionE
 {
   for (const auto& pipeline : m_canProcess)
   {
+    if (pipeline->IsInteractionProcessingBlocked())
+    {
+      continue;
+    }
+
     // If pipeline can process, store pipeline for further interaction events
     if (pipeline->ProcessInteractionEvent(eventData))
     {
