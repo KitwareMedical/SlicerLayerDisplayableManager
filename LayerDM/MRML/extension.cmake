@@ -26,6 +26,8 @@ if (VTK_WRAP_PYTHON)
     vtkMRMLLayerDMObjectEventObserverScripted.h
     vtkMRMLLayerDMPythonUtil.cxx
     vtkMRMLLayerDMPythonUtil.h
+    vtkMRMLNodePythonBridge.cxx
+    vtkMRMLNodePythonBridge.h
   )
 endif ()
 

@@ -280,21 +280,7 @@ void vtkMRMLLayerDMScriptedPipelineBridge::OnUpdate(vtkObject* obj, unsigned lon
 
 PyObject* vtkMRMLLayerDMScriptedPipelineBridge::CallPythonMethod(const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult) const
 {
-  auto result = vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->m_object, pyArgs, fName);
-
-  if (!result)
-  {
-    std::string errorMsg = "Failed to call : " + fName + " : of object : " + vtkMRMLLayerDMPythonUtil::GetObjectStr(this->m_object) + ":";
-    vtkMRMLLayerDMPythonUtil::PrintErrorTraceback(this, errorMsg);
-    return nullptr;
-  }
-  else if (decrementResult)
-  {
-    Py_DECREF(result);
-    return nullptr;
-  }
-
-  return result;
+  return vtkMRMLLayerDMPythonUtil::CallPythonMethod(this->m_object, pyArgs, fName, decrementResult, this);
 }
 
 int vtkMRMLLayerDMScriptedPipelineBridge::CastToIntAndDecrement(PyObject* result) const

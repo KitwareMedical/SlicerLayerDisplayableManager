@@ -1,6 +1,7 @@
 set(LayerDM_PYTHON_SCRIPTS
   __init__.py
   vtkMRMLLayerDMScriptedPipeline.py
+  vtkMRMLNodeScripted.py
 )
 
 set(LayerDM_PYTHON_RESOURCES

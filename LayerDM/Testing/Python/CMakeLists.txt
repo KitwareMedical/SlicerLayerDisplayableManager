@@ -6,6 +6,7 @@ set(EXTENSION_TEST_PYTHON_SCRIPTS
   InteractionLogicTest.py
   LayerManagerTest.py
   LogicTest.py
+  MRMLNodeScriptedTest.py
   ObjectEventObserverScriptedTest.py
   PipelineFactoryTest.py
   PipelineManagerTest.py

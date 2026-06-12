@@ -1,10 +1,12 @@
 set(classes
+  vtkMRMLLayerDMBasePythonBridge
   vtkMRMLLayerDMNodeReferenceObserver
   vtkMRMLLayerDMObjectEventObserver
-  vtkMRMLLayerDMWidgetEventTranslationNode
-  vtkMRMLLayerDMSelectionObserver
   vtkMRMLLayerDMObjectEventObserverScripted
   vtkMRMLLayerDMPythonUtil
+  vtkMRMLLayerDMSelectionObserver
+  vtkMRMLLayerDMWidgetEventTranslationNode
+  vtkMRMLNodePythonBridge
 )
 
 set(headers

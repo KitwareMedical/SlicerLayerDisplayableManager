@@ -156,6 +156,25 @@ PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtk
   return CallPythonObject(method, pyArgs);
 }
 
+PyObject* vtkMRMLLayerDMPythonUtil::CallPythonMethod(PyObject* object, const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult, const vtkObject* owner)
+{
+  const auto result = CallPythonMethod(object, pyArgs, fName);
+  if (!result)
+  {
+    const std::string errorMsg = "Failed to call : " + fName + " : of object : " + GetObjectStr(object) + ":";
+    PrintErrorTraceback(owner, errorMsg);
+    return nullptr;
+  }
+
+  if (decrementResult)
+  {
+    Py_DECREF(result);
+    return nullptr;
+  }
+
+  return result;
+}
+
 PyObject* vtkMRMLLayerDMPythonUtil::CallPythonObject(PyObject* object, const vtkSmartPyObject& pyArgs)
 {
   if (!IsValidPythonContext() || !object)

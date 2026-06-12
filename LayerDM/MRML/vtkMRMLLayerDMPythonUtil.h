@@ -73,6 +73,15 @@ public:
   /// \return PyObject* Return value from the Python method call
   static PyObject* CallPythonMethod(PyObject* object, const vtkSmartPyObject& pyArgs, const std::string& fName);
 
+  /// \brief Call a named method on a Python object with arguments
+  /// \param object Python object on which to call the method
+  /// \param pyArgs Python tuple of arguments to pass to the method
+  /// \param fName Name of the method to call
+  /// \param decrementResult When true, automatically decrement the results and returns nullptr
+  /// \param owner VTK object owning the input PyObject. Used for error reporting only
+  /// \return PyObject* Return value from the Python method call
+  static PyObject* CallPythonMethod(PyObject* object, const vtkSmartPyObject& pyArgs, const std::string& fName, bool decrementResult, const vtkObject* owner);
+
   /// \brief Call a Python callable object with arguments
   /// \param object Python callable object to invoke
   /// \param pyArgs Python tuple of arguments to pass
