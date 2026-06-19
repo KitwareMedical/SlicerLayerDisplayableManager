@@ -91,11 +91,17 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
 
 ## Rendering on top of other actors
 
-Pipelines can define their rendering order through the `GetRenderOrder` method.
+Pipelines can define their rendering order through the `GetRenderOrder` or `GetRenderOrders` method(s).
 
 * `virtual unsigned int GetRenderOrder() const`: Return render order priority (default = 0).
+* `virtual std::vector<unsigned int> GetRenderOrders() const`: Return render order priorities for each renderer layer
+  the pipeline wants to use. This method is recommended when the pipelines wants to manage both background / foreground
+  representations. The pipeline can return an arbitrary long list of RenderOrders (default = {GetRenderOrder()}).
 
 If the value 0 is used, then the objects will be rendered in the default view renderer along builtin 3D Slicer objects.
+
+If the grouping configuration (render order or custom cameras) changes dynamically, the pipeline should emit the
+`RenderGroupingModified` event.
 
 ```python
 class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
