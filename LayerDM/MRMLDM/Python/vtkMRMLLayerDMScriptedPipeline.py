@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 from slicer import (
     vtkMRMLAbstractViewNode,
@@ -45,10 +45,11 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
 
         return False, sys.float_info.max
 
-    def GetCustomCamera(self) -> Optional[vtkCamera]:
+    def GetCustomCamera(self, renderOrder: int) -> Optional[vtkCamera]:
         """
-        Custom pipeline camera.
-        If the returned value is not None, then the pipeline (or dedicated logic) is expected to handle its own camera.
+        Custom pipeline camera for the input renderOrder.
+        If the returned value is not None, then the pipeline (or dedicated logic) is expected to handle its own camera
+        for the given input render order.
         Otherwise, the pipeline will be moved in a renderer with a default camera synchronized on its view default camera.
 
         :return: None by default
@@ -73,6 +74,16 @@ class vtkMRMLLayerDMScriptedPipeline(vtkMRMLLayerDMScriptedPipelineBridge):
         :return: default = 0
         """
         return 0
+
+    def GetRenderOrders(self) -> List[int]:
+        """
+        Arbitrary render orders number where the pipeline wants to be displayed.
+        Allows the pipeline to be displayed in more than one renderer (for instance in the background / foreground).
+        Return larger values to be rendered on top of pipelines with lower render orders.
+
+        :return: default = [self.GetRenderOrder()]
+        """
+        return [self.GetRenderOrder()]
 
     def GetWidgetState(self) -> int:
         """

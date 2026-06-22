@@ -18,6 +18,7 @@ class vtkMRMLLayerDMPipelineI;
 class vtkRenderWindow;
 class vtkRenderer;
 class vtkCamera;
+class vtkMRMLLayerDMObjectEventObserver;
 
 /// \brief Responsible for adding and removing renderer layers to a vtkRenderWindow depending on the
 /// display pipeline preferred render order value.
@@ -42,8 +43,6 @@ public:
   /// May change an update of the layer ordering.
   /// Will trigger the SetRenderer call on the pipeline when it's added to its layer.
   void AddPipeline(vtkMRMLLayerDMPipelineI* pipeline);
-
-  static LayerKey GetPipelineLayerKey(vtkMRMLLayerDMPipelineI* pipeline);
 
   int GetNumberOfDistinctLayers() const;
   int GetNumberOfManagedLayers() const;
@@ -92,8 +91,14 @@ private:
   void UpdateRendererLayerOrdering() const;
   void UpdateRendererCamera();
 
+  bool AddPipelineLayers(vtkMRMLLayerDMPipelineI* pipeline);
+  void RemovePipelineLayers(vtkMRMLLayerDMPipelineI* pipeline);
+
   // Map of pipeline layers ordered by ascending <layer value, camera synchronization mode>
   std::map<LayerKey, std::set<vtkWeakPointer<vtkMRMLLayerDMPipelineI>>> m_pipelineLayers;
+
+  /// Pipeline observer listening for \sa vtkMRMLLayerDMPipelineI::RenderGroupingModified events.
+  vtkSmartPointer<vtkMRMLLayerDMObjectEventObserver> m_obs;
 
   // Placeholder empty pipeline with target layer = 0 and camera sync to layer 0 for default renderer
   vtkSmartPointer<vtkMRMLLayerDMPipelineI> m_emptyPipeline;
