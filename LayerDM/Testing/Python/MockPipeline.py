@@ -1,5 +1,5 @@
 import sys
-from typing import Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 from unittest.mock import MagicMock
 
 from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
@@ -21,7 +21,7 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
 
     def __init__(
         self,
-        renderOrder=0,
+        renderOrders=None,
         widgetState=0,
         canProcess=False,
         processDistance=sys.float_info.max,
@@ -29,10 +29,13 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
         mouseCursor=0,
     ):
         super().__init__()
+        renderOrders = renderOrders or [0]
         self.mockCanProcess = MagicMock(return_value=(canProcess, processDistance))
         self.mockGetCustomCamera = MagicMock(return_value=None)
+        self.mockGetCustomCameras = MagicMock(return_value=[None for _ in renderOrders])
         self.mockGetMouse = MagicMock(return_value=mouseCursor)
-        self.mockGetRenderOrder = MagicMock(return_value=renderOrder)
+        self.mockGetRenderOrder = MagicMock(return_value=renderOrders[0])
+        self.mockGetRenderOrders = MagicMock(return_value=renderOrders)
         self.mockGetWidgetState = MagicMock(return_value=widgetState)
         self.mockLoseFocus = MagicMock()
         self.mockOnDefaultCameraModified = MagicMock()
@@ -51,14 +54,17 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
     def CanProcessInteractionEvent(self, eventData: vtkMRMLInteractionEventData) -> Tuple[bool, float]:
         return self.mockCanProcess(eventData)
 
-    def GetCustomCamera(self) -> Optional[vtkCamera]:
-        return self.mockGetCustomCamera()
+    def GetCustomCamera(self, renderOrder: int) -> Optional[vtkCamera]:
+        return self.mockGetCustomCamera(renderOrder)
 
     def GetMouseCursor(self) -> int:
         return self.mockGetMouse()
 
     def GetRenderOrder(self) -> int:
         return self.mockGetRenderOrder()
+
+    def GetRenderOrders(self) -> List[int]:
+        return self.mockGetRenderOrders()
 
     def GetWidgetState(self) -> int:
         return self.mockGetWidgetState()
@@ -102,6 +108,9 @@ class MockPipeline(vtkMRMLLayerDMScriptedPipeline):
     def SetPipelineManager(self, pipelineManager: vtkMRMLLayerDMPipelineManager) -> None:
         self.mockSetPipelineManager(pipelineManager)
         super().SetPipelineManager(pipelineManager)
+
+    def SetRenderers(self, renderers: List[vtkRenderer]) -> None:
+        self.mockSetRenderers(renderers)
 
     def UpdatePipeline(self) -> None:
         self.mockUpdatePipeline()

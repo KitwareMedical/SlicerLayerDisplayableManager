@@ -90,8 +90,11 @@ use this strategy to render on top of other elements.
 In the extension, the renderers are not manipulated directly by developers in their pipelines but automatically managed
 by the LayerManager class.
 
-From a developer standpoint, only the `GetRenderOrder` value needs to be returned. This value is a static value read
-when new pipelines are added / removed from the pipeline manager.
+From a developer standpoint, only the `GetRenderOrder` (or `GetRenderOrders` when designing DM with multi layers) value
+needs to be returned. This value is read when new pipelines are added / removed from the pipeline manager.
+
+If the grouping configuration (render order or custom cameras) changes dynamically, the pipeline should emit the
+`RenderGroupingModified` event.
 
 Pipelines with the same GetRenderOrder and the same GetCustomCamera will be grouped in the same renderer layer. If the
 value is set to 0, the pipelines will be set to the default renderer layer.
