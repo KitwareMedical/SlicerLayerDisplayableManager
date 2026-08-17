@@ -1,7 +1,10 @@
 #include "vtkMRMLLayerDMObjectEventObserverScripted.h"
 
 #include "vtkMRMLLayerDMPythonUtil.h"
+
 #include <vtkObjectFactory.h>
+#include <vtkPython.h>
+#include <vtkSmartPyObject.h>
 
 vtkStandardNewMacro(vtkMRMLLayerDMObjectEventObserverScripted);
 

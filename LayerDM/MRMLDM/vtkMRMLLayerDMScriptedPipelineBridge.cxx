@@ -12,8 +12,10 @@
 #include <vtkCamera.h>
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
+#include <vtkPython.h>
 #include <vtkPythonUtil.h>
 #include <vtkRenderer.h>
+#include <vtkSmartPyObject.h>
 
 vtkStandardNewMacro(vtkMRMLLayerDMScriptedPipelineBridge);
 

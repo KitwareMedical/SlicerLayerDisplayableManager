@@ -3,9 +3,12 @@
 
 // VTK includes
 #include <vtkObject.h>
-#include <vtkPython.h>
-#include <vtkPythonUtil.h>
-#include <vtkSmartPyObject.h>
+
+#ifndef PyObject_HEAD
+struct _object;
+typedef _object PyObject;
+#endif
+class vtkSmartPyObject;
 
 // STD includes
 #include <string>

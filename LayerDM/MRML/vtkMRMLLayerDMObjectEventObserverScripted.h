@@ -4,10 +4,10 @@
 #include "vtkMRMLLayerDMObjectEventObserver.h"
 #include "vtkSlicerLayerDMModuleMRMLExport.h"
 
-// VTK includes
-#include <vtkPython.h>
-#include <vtkSmartPyObject.h>
-
+#ifndef PyObject_HEAD
+struct _object;
+typedef _object PyObject;
+#endif
 class vtkCallbackCommand;
 
 /// Python lambda implementation of \sa vtkMRMLLayerDMObjectEventObserver

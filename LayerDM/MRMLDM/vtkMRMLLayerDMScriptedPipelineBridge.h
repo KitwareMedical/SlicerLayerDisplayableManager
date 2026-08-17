@@ -4,9 +4,10 @@
 
 #include "vtkMRMLLayerDMPipelineI.h"
 
-// VTK includes
-#include <vtkPython.h>
-
+#ifndef PyObject_HEAD
+struct _object;
+typedef _object PyObject;
+#endif
 class vtkSmartPyObject;
 
 /// \brief Python bridge for vtkMRMLLayerDMPipelineI.

@@ -10,7 +10,9 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
+#include <vtkPython.h>
 #include <vtkPythonUtil.h>
+#include <vtkSmartPyObject.h>
 
 vtkStandardNewMacro(vtkMRMLLayerDMPipelineScriptedCreator);
 

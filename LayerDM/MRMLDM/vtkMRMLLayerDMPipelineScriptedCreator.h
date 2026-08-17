@@ -4,8 +4,10 @@
 
 #include "vtkMRMLLayerDMPipelineCallbackCreator.h"
 
-// VTK includes
-#include <vtkPython.h>
+#ifndef PyObject_HEAD
+struct _object;
+typedef _object PyObject;
+#endif
 
 /// Python lambda implementation of \sa vtkMRMLLayerDMPipelineCallbackCreator
 /// Delegates callback to underlying Python callable object.
