@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock
 
-import slicer
 from slicer import (
     vtkMRMLLayerDMPipelineFactory,
     vtkMRMLLayerDMPipelineManager,
@@ -11,23 +10,24 @@ from slicer import (
     vtkMRMLModelNode,
     vtkMRMLScalarVolumeNode,
 )
-from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkRenderWindow, reference as ref, vtkCommand, vtkRenderer
+
+from LayerDMTestSupport import ScriptedLoadableModuleTest, create_test_scene
 from MockPipeline import MockPipeline
 
 
 class PipelineManagerTest(ScriptedLoadableModuleTest):
     def setUp(self):
-        slicer.mrmlScene.Clear(0)
+        self.scene = create_test_scene()
 
         self.renderWindow = vtkRenderWindow()
         self.factory = vtkMRMLLayerDMPipelineFactory()
 
-        self.viewNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLViewNode")
+        self.viewNode = self.scene.AddNewNodeByClass("vtkMRMLViewNode")
         self.pipelineManager = vtkMRMLLayerDMPipelineManager()
         self.pipelineManager.SetViewNode(self.viewNode)
         self.pipelineManager.SetFactory(self.factory)
-        self.pipelineManager.SetScene(slicer.mrmlScene)
+        self.pipelineManager.SetScene(self.scene)
         self.pipelineManager.SetRenderWindow(self.renderWindow)
         self.defaultRenderer = vtkRenderer()
         self.renderWindow.AddRenderer(self.defaultRenderer)
@@ -75,7 +75,7 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         assert self.pipelineManager.GetNodePipeline(modelNode) is None
 
     def test_on_factory_updated_creates_pipelines_if_needed(self):
-        volumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
+        volumeNode = self.scene.AddNewNodeByClass("vtkMRMLScalarVolumeNode")
         assert volumeNode
         assert self.pipelineManager.GetNodePipeline(volumeNode) is None
 
@@ -85,14 +85,14 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         assert self.pipelineManager.GetNodePipeline(volumeNode) is not None
 
     def test_on_scene_update_add_pipeline_as_needed(self):
-        modelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+        modelNode = self.scene.AddNewNodeByClass("vtkMRMLModelNode")
         self.pipelineManager.UpdateFromScene()
         assert self.pipelineManager.GetNodePipeline(modelNode) is not None
 
     def test_on_scene_update_remove_pipeline_as_needed(self):
-        modelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+        modelNode = self.scene.AddNewNodeByClass("vtkMRMLModelNode")
         self.pipelineManager.AddNode(modelNode)
-        slicer.mrmlScene.RemoveNode(modelNode)
+        self.scene.RemoveNode(modelNode)
         self.pipelineManager.UpdateFromScene()
         assert self.pipelineManager.GetNodePipeline(modelNode) is None
 
@@ -265,29 +265,51 @@ class PipelineManagerTest(ScriptedLoadableModuleTest):
         m1.mockOnRendererRemoved.assert_called_once_with(self.defaultRenderer)
 
     def test_correctly_cleans_up_outdated_pipelines(self):
-        modelNodes = [slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode") for _ in range(5)]
+        modelNodes = [self.scene.AddNewNodeByClass("vtkMRMLModelNode") for _ in range(5)]
         for modelNode in modelNodes:
             self.pipelineManager.AddNode(modelNode)
         pipelines = [self.pipelineManager.GetNthPipeline(i_pipe) for i_pipe in range(self.pipelineManager.GetNumberOfPipelines())]
         modelPipelines = [p for p in pipelines if p.GetDisplayNode() in modelNodes]
         assert len(modelPipelines) == 5
         prevNumber = self.pipelineManager.GetNumberOfPipelines()
-        slicer.mrmlScene.RemoveNode(modelNodes[0])
-        slicer.mrmlScene.RemoveNode(modelNodes[1])
-        slicer.mrmlScene.RemoveNode(modelNodes[2])
+        self.scene.RemoveNode(modelNodes[0])
+        self.scene.RemoveNode(modelNodes[1])
+        self.scene.RemoveNode(modelNodes[2])
         assert self.pipelineManager.GetNumberOfPipelines() == prevNumber
         self.pipelineManager.UpdateFromScene()
         assert self.pipelineManager.GetNumberOfPipelines() == prevNumber - 3
+
+    def test_removes_pipeline_when_its_display_node_is_destroyed(self):
+        # The pipeline manager maps are keyed by the display node. A node destroyed without being removed from
+        # the scene first is forgotten immediately, without requiring a scene update, so that the maps never
+        # contain a destroyed node.
+        prevNumber = self.pipelineManager.GetNumberOfPipelines()
+
+        mock = MockPipeline()
+        self.nextMock = mock
+        node = vtkMRMLMarkupsFiducialNode()
+        assert self.pipelineManager.AddNode(node)
+        assert self.pipelineManager.GetNumberOfPipelines() == prevNumber + 1
+
+        # Release every reference to the node. The mocks record the arguments they are called with, which would
+        # otherwise keep the node alive.
+        self.mockCreate.reset_mock()
+        self.mockModelCreate.reset_mock()
+        mock.mockSetDisplayNode.reset_mock()
+        self.nextMock = None
+        del node
+
+        assert self.pipelineManager.GetNumberOfPipelines() == prevNumber
 
     def test_notifies_pipelines_when_references_are_added_or_removed(self):
         # Create a display markups node
         m1 = MockPipeline()
         self.nextMock = m1
-        dNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode")
+        dNode = self.scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode")
         assert self.pipelineManager.AddNode(dNode)
 
         # Create a markups node
-        markups = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+        markups = self.scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
 
         # Set the markups node display to the previous display node and expect the pipeline to have been notified
         markups.SetAndObserveDisplayNodeID(dNode.GetID())

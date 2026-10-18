@@ -28,10 +28,10 @@ jobs:
       PIP_EXTRA_INDEX_URL: "https://vtk.org/files/wheel-sdks"
       CIBW_ENVIRONMENT_PASS_LINUX: "PIP_EXTRA_INDEX_URL"
       CIBW_BUILD: ${{ inputs.build-target }}
-      # Required to make tests pass (VTK needs them)
-      CIBW_BEFORE_ALL_LINUX: "yum install -y mesa-libGL-devel glx-utils freeglut-devel"
+      CIBW_BEFORE_ALL_LINUX: "yum install -y mesa-libGL-devel glx-utils freeglut-devel mesa-libOSMesa"
+      CIBW_ENVIRONMENT_LINUX: "VTK_DEFAULT_OPENGL_WINDOW=vtkOSOpenGLRenderWindow"
       # Global test setup
-      CIBW_TEST_REQUIRES: "pytest virtualenv"
+      CIBW_TEST_REQUIRES: "pytest"
       # Do not repair, everything is already put just as needed to make it work
       CIBW_REPAIR_WHEEL_COMMAND_LINUX: "
         python -m pip install wheel &&
@@ -58,7 +58,7 @@ jobs:
       - name: Build wheel
         uses: pypa/cibuildwheel@v3.3.1
         env:
-          CIBW_TEST_COMMAND: "python -m pytest {project}/LayerDM -m runtime --verbose"
+          CIBW_TEST_COMMAND: "python -m pytest {project}/LayerDM --verbose"
         with:
           package-dir: LayerDM
           output-dir: wheelhouse
@@ -66,7 +66,8 @@ jobs:
       - name: Build wheel SDK
         uses: pypa/cibuildwheel@v3.3.1
         env:
-          CIBW_TEST_COMMAND: "python -m pytest {project}/LayerDM -m sdk --verbose"
+          CIBW_TEST_REQUIRES: "pytest virtualenv"
+          CIBW_TEST_COMMAND: "python -m pytest {project}/LayerDMSDK --verbose"
         with:
           package-dir: LayerDMSDK
           output-dir: wheelhouse

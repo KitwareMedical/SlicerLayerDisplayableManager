@@ -3,7 +3,7 @@
 #include "vtkSlicerModelGlowModuleMRMLExport.h"
 
 // Slicer includes
-#include "vtkMRMLLayerDMPipelineI.h"
+#include "vtkMRMLLayerDMPipeline.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -15,17 +15,17 @@ class vtkMRMLInteractionEventData;
 class vtkActor;
 class vtkRenderer;
 
-class VTK_SLICER_MODEL_GLOW_MODULE_MRML_EXPORT vtkMRMLModelGlowPipeline : public vtkMRMLLayerDMPipelineI
+class VTK_SLICER_MODEL_GLOW_MODULE_MRML_EXPORT vtkMRMLModelGlowPipeline : public vtkMRMLLayerDMPipeline
 {
 public:
   static vtkMRMLModelGlowPipeline* New();
-  vtkTypeMacro(vtkMRMLModelGlowPipeline, vtkMRMLLayerDMPipelineI);
+  vtkTypeMacro(vtkMRMLModelGlowPipeline, vtkMRMLLayerDMPipeline);
 
   void SetDisplayNode(vtkMRMLNode* displayNode) override;
   void OnRendererRemoved(vtkRenderer* renderer) override;
   void OnRendererAdded(vtkRenderer* renderer) override;
   unsigned int GetRenderOrder() const override;
-  void UpdatePipeline() override;
+  void UpdateFromMRML() override;
   // void SetViewNode(vtkMRMLAbstractViewNode* viewNode) override;
   // void SetScene(vtkMRMLScene* scene) override;
 

@@ -1,14 +1,12 @@
-import slicer
 from slicer import vtkMRMLLayerDMInteractionLogic, vtkMRMLInteractionEventData, vtkMRMLAbstractWidget
-from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import reference, vtkCommand
 
+from LayerDMTestSupport import ScriptedLoadableModuleTest
 from MockPipeline import MockPipeline
 
 
 class InteractionLogicTest(ScriptedLoadableModuleTest):
     def setUp(self):
-        slicer.mrmlScene.Clear(0)
         self.distance = reference(0.0)
         self.event = vtkMRMLInteractionEventData()
         self.logic = vtkMRMLLayerDMInteractionLogic()

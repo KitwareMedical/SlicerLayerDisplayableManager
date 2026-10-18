@@ -1,0 +1,3 @@
+[pytest]
+# Tests the SDK from the point of view of a third party package building against it.
+testpaths = ["tests"]

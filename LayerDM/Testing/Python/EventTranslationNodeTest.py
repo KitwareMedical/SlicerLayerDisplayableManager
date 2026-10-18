@@ -1,16 +1,16 @@
 import os
 from tempfile import TemporaryDirectory
 
-import slicer
 from slicer import vtkMRMLAbstractWidget, vtkMRMLInteractionEventData
-from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkCommand, vtkEvent
+
+from LayerDMTestSupport import ScriptedLoadableModuleTest, create_test_scene, load_scene, save_scene
 
 
 class EventTranslationNodeTest(ScriptedLoadableModuleTest):
     def setUp(self):
-        slicer.mrmlScene.Clear(0)
-        self.tl_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLayerDMWidgetEventTranslationNode")
+        self.scene = create_test_scene()
+        self.tl_node = self.scene.AddNewNodeByClass("vtkMRMLLayerDMWidgetEventTranslationNode")
         self.no_event = vtkMRMLAbstractWidget.WidgetEventNone
 
     def save_restore_scene(self):
@@ -18,11 +18,11 @@ class EventTranslationNodeTest(ScriptedLoadableModuleTest):
 
         with TemporaryDirectory() as tmp_dir:
             scene_path = os.path.join(tmp_dir, "scene.mrb")
-            slicer.util.saveScene(scene_path)
-            slicer.mrmlScene.Clear(0)
-            slicer.util.loadScene(scene_path)
+            save_scene(self.scene, scene_path)
+            self.scene.Clear(0)
+            load_scene(self.scene, scene_path)
 
-        return slicer.mrmlScene.GetNodeByID(node_id)
+        return self.scene.GetNodeByID(node_id)
 
     def click_event(self, event_type, modifier=vtkEvent.AnyModifier):
         event_data = vtkMRMLInteractionEventData()

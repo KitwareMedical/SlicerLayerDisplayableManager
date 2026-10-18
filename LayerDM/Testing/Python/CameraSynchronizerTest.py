@@ -1,14 +1,13 @@
 from unittest.mock import MagicMock
 
-import slicer
 from slicer import vtkMRMLLayerDMCameraSynchronizer, vtkMRMLSliceNode, vtkMRMLViewNode
-from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import vtkCamera, vtkCommand, vtkRenderWindow, vtkRenderer
+
+from LayerDMTestSupport import ScriptedLoadableModuleTest
 
 
 class CameraSynchronizerTest(ScriptedLoadableModuleTest):
     def setUp(self):
-        slicer.mrmlScene.Clear(0)
         self.renderWindow = vtkRenderWindow()
         self.renderer = vtkRenderer()
 

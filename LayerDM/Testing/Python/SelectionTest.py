@@ -1,23 +1,23 @@
 from unittest.mock import MagicMock
 
-import slicer
 from slicer import (
     vtkMRMLLayerDMSelectionObserver,
     vtkMRMLScene,
     vtkMRMLLayerDMObjectEventObserverScripted,
     vtkMRMLInteractionNode,
 )
-from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
+
+from LayerDMTestSupport import ScriptedLoadableModuleTest, create_test_scene
 
 
 class SelectionTest(ScriptedLoadableModuleTest):
     def setUp(self):
-        slicer.mrmlScene.Clear(0)
+        self.scene = create_test_scene()
         self.selection_obs = vtkMRMLLayerDMSelectionObserver()
-        self.selection_obs.SetScene(slicer.mrmlScene)
+        self.selection_obs.SetScene(self.scene)
         self.mock = MagicMock(return_value=None)
         self._spy = vtkMRMLLayerDMObjectEventObserverScripted()
-        self._spy.UpdateObserver(None, self.selection_obs)
+        self._spy.UpdateObservation(None, self.selection_obs)
         self._spy.SetPythonCallback(self.mock)
 
     def test_has_access_to_singleton_nodes(self):
@@ -33,7 +33,7 @@ class SelectionTest(ScriptedLoadableModuleTest):
         assert obs.GetSelectionNode() is None
 
     def test_helps_in_placing_nodes(self):
-        markups_node = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
+        markups_node = self.scene.AddNewNodeByClass("vtkMRMLMarkupsFiducialNode")
         self.selection_obs.StartPlace(markups_node, True)
 
         self.mock.assert_called()

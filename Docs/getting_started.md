@@ -7,7 +7,7 @@ To get started, developers need to implement the following classes / logic:
 
 ## Pipeline
 
-Pipeline objects derive from the vtkMRMLLayerDMPipelineI base class in C++ and the vtkMRMLLayerDMScriptedPipeline in
+Pipeline objects derive from the vtkMRMLLayerDMPipeline base class in C++ and the vtkMRMLLayerDMScriptedPipeline in
 python.
 
 Pipeline implementation can be split in two:
@@ -55,15 +55,15 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
 ## Refreshing the display
 
 By default, the display is refreshed when the pipeline is created. Afterwards, refreshing its display should be
-connected to the object events and the `ResetDisplay` method should be called.
+connected to the object events and the `UpdateDisplay` method should be called.
 
-Calling this method will call the `UpdatePipeline` method and will request a render from the widget.
+Calling this method will call the `UpdateFromMRML` method and will request a render from the widget.
 
 ```python
 class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
-    def UpdatePipeline(self):
+    def UpdateFromMRML(self):
         """
-        Triggered by self.ResetDisplay() calls:
+        Triggered by self.UpdateDisplay() calls:
             - Called automatically at pipeline creation / add to the render window
             - Called automatically when switching renderer
         Override to update the representation of the pipeline in the different views.
@@ -78,15 +78,15 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
     def OnUpdate(self, obj, eventId, callData):
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
         :param callData: Optional observer call data. Use self.CastCallData(callData, vtkType) to convert to Python
         """
 
-        # Calling reset display will trigger the UpdatePipeline method call
-        self.ResetDisplay()
+        # Calling reset display will trigger the UpdateFromMRML method call
+        self.UpdateDisplay()
 ```
 
 ## Rendering on top of other actors
@@ -123,16 +123,16 @@ modified, the event ID and call data.
 
 * `virtual void OnUpdate(vtkObject* obj, unsigned long eventId, void* callData)`: Callback when observed event triggers.
 
-To observe other objet events, the `UpdateObserver` can be used.
+To observe other objet events, the `UpdateObservation` can be used.
 
-* `bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const`: Update
+* `bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, const std::vector<unsigned long>& events) const`: Update
   observer with multiple events.
-* `bool UpdateObserver(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const`:
+* `bool UpdateObservation(vtkObject* prevObj, vtkObject* obj, unsigned long event = vtkCommand::ModifiedEvent) const`:
   Update observer with single event.
-* `void RemoveObserver(vtkObject* prevObj) const`: Remove all observed events.
+* `void RemoveObservations(vtkObject* prevObj)`: Remove all observed events.
 
 ```{warning}
-UpdateObserver doesn't mutate the prevObj (for Python wrapping compatibility reasons). The object's value should be
+UpdateObservation doesn't mutate the prevObj (for Python wrapping compatibility reasons). The object's value should be
 updated manually after this update call.
 ```
 
@@ -142,8 +142,8 @@ event.
 * `virtual void SetViewNode(vtkMRMLAbstractViewNode* viewNode)`: Called at initialization.
 * `virtual void SetDisplayNode(vtkMRMLNode* displayNode)`: Called at initialization.
 
-During the `OnUpdate` call if the display should be update, then the `ResetDisplay` method should be called. This method
-will trigger the `UpdatePipeline` method which can be overridden to update display properties and will also trigger a
+During the `OnUpdate` call if the display should be update, then the `UpdateDisplay` method should be called. This method
+will trigger the `UpdateFromMRML` method which can be overridden to update display properties and will also trigger a
 request render.
 
 ```python
@@ -161,14 +161,14 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         # The two attributes below are used to connect observers on the modelNode and the modelTransform ModifiedEvent
         # The vtkMRMLLayerDMScriptedPipeline base class provides convenience methods to simply observers
         # See also: OnUpdate
-        # See also: UpdateObserver
+        # See also: UpdateObservation
         self._modelNode = None
         self._modelTransform = None
 
     def OnUpdate(self, obj, eventId, callData):
         """
         Observer update callback.
-        Triggered when any object & events observed using UpdateObserver is triggered.
+        Triggered when any object & events observed using UpdateObservation is triggered.
 
         :param obj: vtkObject instance which triggered the callback
         :param eventId: Event id which triggered the callback
@@ -178,7 +178,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         if obj == self._modelNode:
             self._ObserveModelTransformNode()
 
-        self.ResetDisplay()
+        self.UpdateDisplay()
 
     def _ObserveModelTransformNode(self):
         """
@@ -191,7 +191,7 @@ class MyPipeline(vtkMRMLLayerDMScriptedPipeline):
         if self._modelTransform == transformNode:
             return
 
-        self.UpdateObserver(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
+        self.UpdateObservation(self._modelTransform, transformNode, vtkMRMLTransformNode.TransformModifiedEvent)
         self._modelTransform = transformNode
 ```
 
@@ -332,7 +332,7 @@ Example of registration for one view type with multiple display node / display p
 
 void vtkMRMLCPRPipelineCreatorLogic::RegisterPipelines()
 {
-  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> creator{ nullptr };
+  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> creator{ nullptr };
 
   if (!creator)
   {
@@ -380,7 +380,7 @@ vtkMRMLLayerDMPipelineFactory.GetInstance().AddPipelineCreator(pipeline_creator)
 ```
 
 ```cpp
-  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreatorI> creator{ nullptr };
+  static vtkSmartPointer<vtkMRMLLayerDMPipelineCreator> creator{ nullptr };
 
   if (!creator)
   {

@@ -1,5 +1,6 @@
 [pytest]
-markers = [
-    "runtime: Run tests that only requires SlicerLayerDM runtime wheel",
-    "sdk: Run tests that requires both SlicerLayerDM and its SDK",
-]
+# Both `test_*.py` (pytest style) and `*Test.py` (3D Slicer style) modules are collected.
+# LayerDM tests only require the LayerDM runtime wheel: tests requiring the SDK belong
+# to the LayerDMSDK project.
+python_files = ["test_*.py", "*Test.py"]
+testpaths = ["tests", "Testing/Python"]

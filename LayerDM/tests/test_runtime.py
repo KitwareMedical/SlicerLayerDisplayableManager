@@ -1,18 +1,13 @@
-import pytest
-
-
-@pytest.mark.runtime
 def test_import_layerdm():
     """
     This is a simple test that import the package and checks that it is found.
     """
-    from slicer import vtkMRMLLayerDMPipelineI # noqa
+    from slicer import vtkMRMLLayerDMPipeline # noqa
     from LayerDMLib import vtkMRMLLayerDMScriptedPipeline
 
     vtkMRMLLayerDMScriptedPipeline()
 
 
-@pytest.mark.runtime
 def test_layerdm_through_factory():
     """
     Test that we can instantiate a displayable manager using the slicer-core provided factories
