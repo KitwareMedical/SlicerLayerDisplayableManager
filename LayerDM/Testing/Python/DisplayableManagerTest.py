@@ -1,7 +1,8 @@
-import slicer
 from slicer import (
+    vtkMRMLApplicationLogic,
+    vtkMRMLDisplayableManagerGroup,
     vtkMRMLLayerDMPipelineFactory,
-    vtkMRMLLayerDMPipelineI,
+    vtkMRMLLayerDMPipeline,
     vtkMRMLLayerDMPipelineManager,
     vtkMRMLLayerDMPipelineScriptedCreator,
     vtkMRMLLayerDisplayableManager,
@@ -10,15 +11,20 @@ from slicer import (
     vtkMRMLSliceViewDisplayableManagerFactory,
     vtkMRMLThreeDViewDisplayableManagerFactory,
 )
-from slicer.ScriptedLoadableModule import ScriptedLoadableModuleTest
 from vtk import VTK_OBJECT, vtkActor, vtkImageData, vtkObjectFactory, vtkRenderer
 
+from LayerDMTestSupport import (
+    ScriptedLoadableModuleTest,
+    create_render_window,
+    create_test_scene,
+    is_rendering_supported,
+)
 from MockPipeline import MockPipeline
 
 
 class DisplayableManagerTest(ScriptedLoadableModuleTest):
     def setUp(self):
-        slicer.mrmlScene.Clear(0)
+        self.scene = create_test_scene()
 
         # Verify the DM can be created by the vtk Object Factory
         assert vtkObjectFactory.CreateInstance(vtkMRMLLayerDisplayableManager.__name__) is not None
@@ -34,7 +40,23 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
             vtkMRMLThreeDViewDisplayableManagerFactory.GetInstance()
         )
 
-        self.threeDNode = slicer.mrmlScene.GetNodeByID("vtkMRMLViewNode1")
+        # Create a 3D view node and display it in a standalone render window.
+        # This is the slicer-core equivalent of the 3D view created by the 3D Slicer
+        # application layout manager.
+        self.threeDNode = self.scene.AddNewNodeByClass("vtkMRMLViewNode")
+        self.renderWindow, self.renderer = create_render_window()
+
+        self.displayableManagerFactory = vtkMRMLThreeDViewDisplayableManagerFactory()
+        self.displayableManagerFactory.SetMRMLApplicationLogic(vtkMRMLApplicationLogic())
+        vtkMRMLLayerDisplayableManager.RegisterInFactory(self.displayableManagerFactory)
+
+        self.displayableManagerGroup = vtkMRMLDisplayableManagerGroup()
+        self.displayableManagerGroup.Initialize(self.displayableManagerFactory, self.renderer)
+        self.displayableManagerGroup.SetMRMLDisplayableNode(self.threeDNode)
+        self.displayableManager = self.displayableManagerGroup.GetDisplayableManagerByClassName(
+            vtkMRMLLayerDisplayableManager.__name__
+        )
+
         self.node = vtkMRMLScriptedModuleNode()
 
         # Register a pipeline creator with static pipeline
@@ -60,29 +82,27 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
         self.pipeline.mockOnRendererAdded.side_effect = onRendererAdded
 
         # Trigger pipeline creation by adding a node to the scene
-        slicer.mrmlScene.AddNode(self.node)
+        self.scene.AddNode(self.node)
 
         # Verify the pipeline's actor is present in the threed view
-        renderWindow = slicer.app.layoutManager().viewWidget(self.threeDNode).viewWidget().renderWindow()
-        renderer = renderWindow.GetRenderers().GetItemAsObject(0)
-        assert renderer.HasViewProp(actor)
+        assert self.renderer.HasViewProp(actor)
 
     def test_registered_pipelines_have_access_to_scene_manager_view_and_display_node(self):
         # Trigger pipeline creation by adding a new model node to the scene
-        slicer.mrmlScene.AddNode(self.node)
+        self.scene.AddNode(self.node)
 
         # Check getters point to the right instances
-        assert self.pipeline.GetScene() == slicer.mrmlScene
+        assert self.pipeline.GetScene() == self.scene
         assert isinstance(self.pipeline.GetPipelineManager(), vtkMRMLLayerDMPipelineManager)
         assert self.pipeline.GetViewNode() == self.threeDNode
         assert self.pipeline.GetDisplayNode() == self.node
 
     def test_registered_pipelines_can_override_setters_to_scene_manager_view_and_display_node(self):
         # Trigger pipeline creation by adding a new model node to the scene
-        slicer.mrmlScene.AddNode(self.node)
+        self.scene.AddNode(self.node)
 
         # Check overridden setters where called
-        self.pipeline.mockSetScene.assert_called_with(slicer.mrmlScene)
+        self.pipeline.mockSetScene.assert_called_with(self.scene)
         self.pipeline.mockSetPipelineManager.assert_called_with(self.pipeline.GetPipelineManager())
         self.pipeline.mockSetViewNode.assert_called_with(self.threeDNode)
         self.pipeline.mockSetDisplayNode.assert_called_with(self.node)
@@ -99,8 +119,8 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
         self.factory.AddPipelineCreator(otherCreator)
 
         # Add both nodes to the scene for pipeline creation to happen
-        slicer.mrmlScene.AddNode(self.node)
-        slicer.mrmlScene.AddNode(otherNode)
+        self.scene.AddNode(self.node)
+        self.scene.AddNode(otherNode)
 
         # Assert the first pipeline has access to the second one
         assert self.pipeline.GetNodePipeline(otherNode) == otherPipeline
@@ -108,43 +128,47 @@ class DisplayableManagerTest(ScriptedLoadableModuleTest):
     def test_pipelines_can_add_observers_to_vtk_objects_and_events(self):
         def onSetScene(scene: vtkMRMLScene):
             assert self.pipeline.GetScene() != scene
-            self.pipeline.UpdateObserver(self.pipeline.GetScene(), scene, vtkMRMLScene.NodeAddedEvent)
-            vtkMRMLLayerDMPipelineI.SetScene(self.pipeline, scene)
+            self.pipeline.UpdateObservation(self.pipeline.GetScene(), scene, vtkMRMLScene.NodeAddedEvent)
+            vtkMRMLLayerDMPipeline.SetScene(self.pipeline, scene)
 
         # Add observer on the scene when its added
         self.pipeline.mockSetScene.side_effect = onSetScene
 
-        slicer.mrmlScene.AddNode(self.node)
+        self.scene.AddNode(self.node)
         self.pipeline.mockSetScene.assert_called_once()
 
-        modelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+        modelNode = self.scene.AddNewNodeByClass("vtkMRMLModelNode")
         self.pipeline.mockOnUpdate.assert_called_once()
         args = self.pipeline.mockOnUpdate.call_args[0]
-        assert args[0] == slicer.mrmlScene
+        assert args[0] == self.scene
         assert args[1] == vtkMRMLScene.NodeAddedEvent
         assert self.pipeline.CastCallData(args[2], VTK_OBJECT) == modelNode
 
     def test_pipelines_update_display_is_called_at_init(self):
-        slicer.mrmlScene.AddNode(self.node)
-        self.pipeline.mockUpdatePipeline.assert_called_once()
+        self.scene.AddNode(self.node)
+        self.pipeline.mockUpdateFromMRML.assert_called_once()
 
-    def test_pipelines_update_display_is_called_at_reset(self):
-        slicer.mrmlScene.AddNode(self.node)
-        self.pipeline.mockUpdatePipeline.reset_mock()
+    def test_pipelines_update_from_mrml_is_called_at_update_display(self):
+        self.scene.AddNode(self.node)
+        self.pipeline.mockUpdateFromMRML.reset_mock()
 
-        self.pipeline.ResetDisplay()
-        self.pipeline.mockUpdatePipeline.assert_called_once()
+        self.pipeline.UpdateDisplay()
+        self.pipeline.mockUpdateFromMRML.assert_called_once()
 
     def test_pipeline_exceptions_are_propagated_to_python(self):
         _error_msg = "Something went wrong in Python"
-        self.pipeline.mockUpdatePipeline.side_effect = RuntimeError(_error_msg)
+        self.pipeline.mockUpdateFromMRML.side_effect = RuntimeError(_error_msg)
 
         with self.assertRaises(RuntimeError) as context:
-            slicer.mrmlScene.AddNode(self.node)
+            self.scene.AddNode(self.node)
         assert _error_msg in str(context.exception)
 
     def test_can_render_to_image_data(self):
-        render_window = slicer.app.layoutManager().threeDWidget(0).threeDView().renderWindow()
+        if not is_rendering_supported():
+            self.skipTest("No OpenGL implementation available to render offscreen")
+
+        render_window = self.renderWindow
+        render_window.Render()
 
         # Direct return value call
         image = vtkMRMLLayerDisplayableManager.RenderWindowBufferToImage(render_window)

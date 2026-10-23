@@ -50,7 +50,7 @@ void vtkMRMLModelGlowPipeline::OnRendererAdded(vtkRenderer* renderer)
   renderer->SetPass(glowPass);
 }
 
-void vtkMRMLModelGlowPipeline::UpdatePipeline()
+void vtkMRMLModelGlowPipeline::UpdateFromMRML()
 {
   if (this->GetDisplayNode() && this->ModelNode)
   {
@@ -66,7 +66,7 @@ void vtkMRMLModelGlowPipeline::UpdatePipeline()
 
 void vtkMRMLModelGlowPipeline::SetModelNode(vtkMRMLModelNode* node)
 {
-  UpdateObserver(this->ModelNode, node);
+  UpdateObservation(this->ModelNode, node);
   this->ModelNode = node;
 
   if (!this->ModelNode)
@@ -78,7 +78,7 @@ void vtkMRMLModelGlowPipeline::SetModelNode(vtkMRMLModelNode* node)
   mapper->SetInputData(this->ModelNode->GetPolyData());
   this->GlowActor->SetMapper(mapper);
 
-  // UpdateObserver(this->ModelNode, node);
+  // UpdateObservation(this->ModelNode, node);
 
   auto transformNode = this->ModelNode->GetParentTransformNode();
   if (transformNode)
@@ -101,7 +101,7 @@ void vtkMRMLModelGlowPipeline::OnUpdate(vtkObject* node, unsigned long eventId, 
     SetDisplayNode(displayNode);
   }
 
-  ResetDisplay();
+  UpdateDisplay();
 }
 
 bool vtkMRMLModelGlowPipeline::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)

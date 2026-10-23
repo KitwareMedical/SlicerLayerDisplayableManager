@@ -60,3 +60,6 @@ git_describe_command = [ "git", "describe", "--tags", "--abbrev=0", "--match", "
 
 [project.entry-points."cmake.prefix"]
 SlicerLayerDM = "slicer_layer_dm_sdk.cmake"
+
+[project.optional-dependencies]
+test = ["pytest", "virtualenv"]

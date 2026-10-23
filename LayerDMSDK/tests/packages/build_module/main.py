@@ -1,4 +1,4 @@
-# This tests that we can use our custom vtkMRMLLayerDMPipelineI subclass
+# This tests that we can use our custom vtkMRMLLayerDMPipeline subclass
 # with the vtkMRMLLayerDMPipelineScriptedCreator and vtkMRMLLayerDMPipelineFactory
 
 from slicer import (

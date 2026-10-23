@@ -1,13 +1,15 @@
 """
-This creates a venv and and build a project that consumes our SDK and check that we can import it correctly.
+This creates a venv and builds a project that consumes our SDK and checks that we can import it correctly.
+
+This tests the SDK from the point of view of a third party package building against it,
+hence it is part of the SDK test suite and not of the LayerDM unittests.
 """
 
-import pytest
-
 from pathlib import Path
+
 from .venv import VEnv
 
-@pytest.mark.sdk
+
 def test_build_module(virtualenv: VEnv, curdir: Path, tmp_path: Path):
     # To enable current project to be used we have to cut pypi index
     # But doing so would cause issues with dependencies, so we use the
@@ -26,14 +28,14 @@ def test_build_module(virtualenv: VEnv, curdir: Path, tmp_path: Path):
        "--wheel-dir", tmp_path.as_posix()
     )
 
-    runtime_dir = curdir.parent.resolve()
+    runtime_dir = (curdir.parent.parent / "LayerDM").resolve()
     virtualenv.module("pip", "wheel", runtime_dir.as_posix(),
         "--find-links", tmp_path.as_posix(),
         "--no-index",
         "--wheel-dir", tmp_path.as_posix()
     )
 
-    sdk_dir = (curdir.parent.parent / "LayerDMSDK").resolve()
+    sdk_dir = curdir.parent.resolve()
     virtualenv.module("pip", "wheel", sdk_dir.as_posix(),
         "--find-links", tmp_path.as_posix(),
         "--no-index",

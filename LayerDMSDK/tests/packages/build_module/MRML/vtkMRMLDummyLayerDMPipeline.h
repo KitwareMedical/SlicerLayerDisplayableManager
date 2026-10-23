@@ -3,13 +3,13 @@
 
 #include "vtkDummyMRMLLayerDMPipelineModule.h"
 
-#include <vtkMRMLLayerDMPipelineI.h>
+#include <vtkMRMLLayerDMPipeline.h>
 
-class VTK_DUMMY_MRMLLAYERDMPIPELINE_EXPORT vtkMRMLDummyLayerDMPipeline : public vtkMRMLLayerDMPipelineI
+class VTK_DUMMY_MRMLLAYERDMPIPELINE_EXPORT vtkMRMLDummyLayerDMPipeline : public vtkMRMLLayerDMPipeline
 {
 public:
   static vtkMRMLDummyLayerDMPipeline* New();
-  vtkTypeMacro(vtkMRMLDummyLayerDMPipeline, vtkMRMLLayerDMPipelineI);
+  vtkTypeMacro(vtkMRMLDummyLayerDMPipeline, vtkMRMLLayerDMPipeline);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:

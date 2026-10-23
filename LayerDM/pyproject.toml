@@ -60,4 +60,4 @@ root = ".."
 git_describe_command = [ "git", "describe", "--tags", "--abbrev=0", "--match", "v[0-9]*"] # we are only interested by last tag name
 
 [project.optional-dependencies]
-test = ["pytest", "virtualenv"]
+test = ["pytest"]

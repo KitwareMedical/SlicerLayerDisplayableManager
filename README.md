@@ -85,3 +85,27 @@ the [getting started documentation](https://slicerlayerdisplayablemanager.readth
 
 And refer to
 the [examples](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/tree/main/Examples/Python/ModelGlowDM/ModelGlowDM.py).
+
+## Testing
+
+Tests are split between the two projects:
+
+- `LayerDM` is covered by unittests that only require the LayerDM runtime wheel. They are run by the 3D Slicer test
+  runner when testing the extension, and by [pytest](https://docs.pytest.org) when testing the wheels.
+- `LayerDMSDK` is covered by a test that builds a third party package against the SDK. Requiring the SDK, it belongs to
+  the SDK test suite and is out of the scope of the LayerDM unittests.
+
+To run them against the wheels, install the `slicer-layer-dm` wheel (and its dependencies) in a Python environment,
+then:
+
+```bash
+# LayerDM unittests (runtime wheel only)
+python -m pytest LayerDM
+
+# LayerDMSDK tests (require the SDK wheel)
+python -m pytest LayerDMSDK
+```
+
+Note: `LayerDM/Testing/Python` drives displayable managers in render windows and renders offscreen. No X server is
+required: with no `DISPLAY`, VTK falls back to the EGL backend and renders with software GL. A display is only used if
+one is already available.

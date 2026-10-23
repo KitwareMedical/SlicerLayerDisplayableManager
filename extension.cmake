@@ -13,16 +13,6 @@ find_package(Slicer REQUIRED)
 include(${Slicer_USE_FILE})
 
 #-----------------------------------------------------------------------------
-# Extension version (auto updated by semantic version)
-set(LayerDM_VERSION "v1.2.5")
-
-string(SUBSTRING "${LayerDM_VERSION}" 1 -1 LayerDM_VERSION) # remove first character
-string(REPLACE "." ";" version_components "${LayerDM_VERSION}") # this creates a list
-list(GET version_components 0 LayerDM_VERSION_MAJOR)
-list(GET version_components 1 LayerDM_VERSION_MINOR)
-list(GET version_components 2 LayerDM_VERSION_PATCH)
-
-#-----------------------------------------------------------------------------
 # Extension modules
 add_subdirectory(LayerDM)
 
