@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v2.0.0 (2026-10-23)
+
+### Bug Fixes
+
+- Add missing accessors
+  ([`5ac19f1`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/5ac19f1f457a383f31d09da9754bfe35269cea21))
+
+- Fix LayerDM Pipeline cleanup
+  ([`3eb43bc`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/3eb43bcc217a126df370bc0faa49baf5eb2d70bd))
+
+- Synchronize pipeline manager render window to LayerDM
+  ([`ee9423d`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/ee9423d6f4556f6339ea5dbf871f5319c3ae0ec3))
+
+### Features
+
+- **api**: Backport api changes from Slicer
+  ([`bb01cf2`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/bb01cf23281181e75c700410045a697b68730d19))
+
+- **multi-render-order**: Add support for multi render order
+  ([`8adb3de`](https://github.com/KitwareMedical/SlicerLayerDisplayableManager/commit/8adb3dec4c4176f14b68a38980cfb7c23eefc234))
+
+### Breaking Changes
+
+- **api**: Backport API changes from: https://github.com/Slicer/Slicer/pull/9184
+
+
 ## v1.2.5 (2026-03-25)
 
 ### Bug Fixes
