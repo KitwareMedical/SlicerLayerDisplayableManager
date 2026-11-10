@@ -19,6 +19,10 @@ on:
         description: "Wheel platform tag to apply after building."
         required: true
         type: string
+      slicer-core-version:
+        description: "slicer-core version to build against, appended to the package version (e.g. 5.11.0.6)."
+        required: true
+        type: string
 
 jobs:
   build-test:
@@ -46,11 +50,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-tags: true # tags are used to determine wheel version
+          # Full history for slicer-core version pin and CI run
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ inputs.python-version }}
+
+      # Rewrites the slicer-core pins of both pyprojects and freezes the wheel
+      # version to <library version>.<slicer-core version>.
+      - name: Pin slicer-core version
+        run: python .github/scripts/pin_slicer_core.py --slicer-core "${{ inputs.slicer-core-version }}"
 
       # Required to use MSVC with Ninja
       - uses: ilammy/msvc-dev-cmd@v1.13.0
@@ -75,13 +85,13 @@ jobs:
       - name: Upload runtime wheels
         uses: actions/upload-artifact@v4
         with:
-          name: slicer_layer_dm-${{ inputs.build-target }}
+          name: slicer_layer_dm-${{ inputs.slicer-core-version }}-${{ inputs.build-target }}
           path: |
             wheelhouse/slicer_layer_dm-*.whl
 
       - name: Upload SDK wheels
         uses: actions/upload-artifact@v4
         with:
-          name: slicer_layer_dm_sdk-${{ inputs.build-target }}
+          name: slicer_layer_dm_sdk-${{ inputs.slicer-core-version }}-${{ inputs.build-target }}
           path: |
             wheelhouse/slicer_layer_dm_sdk-*.whl
