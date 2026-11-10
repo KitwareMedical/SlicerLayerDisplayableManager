@@ -2,7 +2,7 @@
 requires = [
   "scikit-build-core",
   "slicer-core-sdk==5.11.0.*",
-  "vtk-sdk==9.6.0",
+  "vtk-sdk==9.6.2",
   "vtk-sdk-python-wheel-helper"
 ]
 build-backend = "scikit_build_core.build"
@@ -24,6 +24,12 @@ authors = [
   { name = "Alexy Pellegrini", email = "alexy.pellegrini@kitware.com" }
 ]
 keywords = ["Python", "VTK", "ITK", "3DSlicer", "Slicer", "Medical"]
+dependencies = [
+  "slicer-core-sdk==5.11.0.*",
+  "vtk-sdk==9.6.2",
+  "vtk-sdk-python-wheel-helper",
+  "scikit-build-core",
+]
 
 classifiers = [
   "License :: OSI Approved :: BSD License",

@@ -9,6 +9,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         py-abi: ["cp310", "cp311", "cp312", "cp313"]
+        slicer-core: ["5.12.4.0", "5.13.31053.0"]
         include:
           # Python version to install on host
           - py-abi: cp310
@@ -35,6 +36,7 @@ jobs:
       build-target: ${{ matrix.py-abi }}-${{ matrix.build-target }}
       python-version: ${{ matrix.python-version }}
       platform-tag: ${{ matrix.platform-tag }}
+      slicer-core-version: ${{ matrix.slicer-core }}
 
   upload-pypi:
     name: Push runtime wheel on PyPi
